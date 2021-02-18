@@ -11,7 +11,7 @@ function checkUserAuthStateAndCachedData(): Promise<GameResponse> {
 		const mockResponse = {
 			success: true,
 			message: "Everything is ready",
-			type: UserStatus.AUTHENTICATED
+			type: UserStatus.NOT_AUTHENTICATED
 		};
 		setTimeout(() => resolve(mockResponse), 2000);
 	});

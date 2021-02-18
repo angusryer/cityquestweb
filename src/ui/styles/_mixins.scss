@@ -1,0 +1,6 @@
+@mixin menu_button ($width: 150px) {
+    width: $width;
+    max-width: 80%;
+    min-width: fit-content;
+    margin: 3px auto;
+}

@@ -1,5 +1,8 @@
 .splash {
-    &__title {
-        font-weight: 700;
-    }
+	&__spinnergrp {
+		flex-direction: row;
+		&-spinner {
+			margin: auto 4px;
+		}
+	}
 }
