@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Auth screen <Auth /> matches previous snapshot 1`] = `
+<View
+  style={
+    Object {
+      "alignItems": "center",
+      "height": "100vh",
+      "justifyContent": "center",
+    }
+  }
+>
+  <Text>
+    This is the Auth screen
+  </Text>
+</View>
+`;
