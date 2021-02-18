@@ -1,0 +1,9 @@
+{
+  "hosting": {
+    "site": "city-quest",
+    "public": "public",
+    ...
+  }
+}
+
+firebase deploy --only hosting:city-quest
