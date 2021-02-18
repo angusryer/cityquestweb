@@ -6,7 +6,7 @@ This app best runs on your mobile device. You'll need to allow the app permissio
 
 ## Todos
 
-- Update the [https://web.dev/add-manifest](manifest) for SEO.
+- Update the [manifest](https://web.dev/add-manifest) for SEO.
 - Port React Native logic over to this app
 - Ensure tests pass
 - Continue development
