@@ -1,4 +1,3 @@
-import { ActivePlayer } from "./player";
 
 export default interface Game {
 	gameId: string;
@@ -6,5 +5,4 @@ export default interface Game {
 	currentRunTime: number;
 	isPaused: boolean;
 	isActive: boolean;
-	player: ActivePlayer;
 }

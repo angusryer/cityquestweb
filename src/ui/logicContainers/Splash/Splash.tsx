@@ -2,7 +2,7 @@ import React from "react";
 import Spinner from "react-bootstrap/Spinner";
 import "./Splash.scss";
 
-export default function Splash() {
+const Splash = () => {
 	return (
 		<main className='splash'>
 			<div className='splash__spinnergrp'>
@@ -12,4 +12,6 @@ export default function Splash() {
 			</div>
 		</main>
 	);
-}
+};
+
+export default Splash;

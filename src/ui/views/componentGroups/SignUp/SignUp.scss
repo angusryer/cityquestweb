@@ -1,0 +1,14 @@
+@import '../../../globalStyles/mixins';
+
+.signup {
+    &__title {
+        font-weight: 700;
+        text-align: center;
+    }
+    &__btn {
+        @include menu_button(200px);
+    }
+    &__spacer {
+        height: 1rem;
+    }
+}

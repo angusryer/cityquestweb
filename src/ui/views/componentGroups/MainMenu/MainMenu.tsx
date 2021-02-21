@@ -1,16 +1,8 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import "./Menu.scss";
+import "./MainMenu.scss";
 
-export default function Menu() {
-	// const { playerName, dispatch } = useContext(PlayerContext);
-	// const createNewPlayer = () => {
-	// 	console.log(playerName);
-	// 	dispatch({ type: "new_player", payload: "BOB" })
-	// };
-	// const deletePlayer = () => {
-	// 	dispatch({ type: "delete_player", payload: "BOB" })
-	// };
+const MainMenu = () => {
 	return (
 		<main className='menu'>
 			<h1 className='menu__title'>City Quest</h1>
@@ -27,4 +19,6 @@ export default function Menu() {
 			</div>
 		</main>
 	);
-}
+};
+
+export default MainMenu;

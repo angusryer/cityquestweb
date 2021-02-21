@@ -1,18 +1,37 @@
 import { useReducer } from "react";
 import { Coordinates, GameObject } from "../../models/types";
-import { ActivePlayer } from "../../models/player";
+import { Player } from "../../models/player";
 
-export const guestPlayer: ActivePlayer = {
+export const guestPlayer: Player = {
 	playerId: "0110011101110101011001010111001101110100",
 	createdAt: 0,
 	displayName: "Guest Player",
 	tools: [],
 	location: [0, 0],
-	clues: []
+	clues: [],
+	signIn: () => {
+		return;
+	},
+	signOut: () => {
+		return;
+	},
+	changeDisplayName: (_displayName: string) => {
+		return;
+	},
+	updateLocation: (_coords: Coordinates) => {
+		return [0, 0];
+	},
+	addItem: (_item: GameObject) => {
+		return { success: true, message: "" };
+	},
+	removeItem: (_itemId: string) => {
+		return { success: true, message: "" };
+	}
 };
 
 // Set up Action Types
 type Action = ReturnType<
+	| typeof signInAction
 	| typeof signOutAction
 	| typeof deleteAccountAction
 	| typeof changeDisplayNameAction
@@ -22,12 +41,19 @@ type Action = ReturnType<
 >;
 
 // Set up Actions
+const SIGN_IN = "sign_in";
 const SIGN_OUT = "sign_out";
 const DELETE_ACCOUNT = "delete_account";
 const CHANGE_DISPLAY_NAME = "change_display_name";
 const UPDATE_LOCATION = "update_location";
 const ADD_GAME_OBJECT = "add_game_object";
 const REMOVE_GAME_OBJECT = "remove_game_object";
+
+export function signInAction() {
+	return <const>{
+		type: SIGN_IN
+	};
+}
 
 export function signOutAction() {
 	return <const>{
@@ -69,8 +95,10 @@ export function removeGameObjectAction(gameObjectId: string) {
 	};
 }
 
-export function playerReducer(player: ActivePlayer, action: Action) {
+export function playerReducer(player: Player, action: Action) {
 	switch (action.type) {
+		case SIGN_IN:
+			return { ...guestPlayer, displayName: "Angus" };
 		case SIGN_OUT:
 			return guestPlayer; // TODO update cache, sign out remote, return guestPlayer
 		case DELETE_ACCOUNT:

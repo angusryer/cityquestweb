@@ -1,18 +1,12 @@
-import { ActivePlayer } from "../../models/player";
+import { Player } from "../../models/player";
+import { guestPlayer } from "../reducers/playerReducers";
 
 export async function loadPlayerFromStorage(
 	playerId: string
-): Promise<ActivePlayer | string> {
+): Promise<Player | string> {
 	return new Promise((resolve, _reject) => {
 		setTimeout(() => {
-			resolve({
-				playerId: playerId,
-				displayName: "Test",
-				createdAt: 123456,
-				clues: [],
-				location: [0, 0],
-				tools: []
-			} as ActivePlayer);
+			resolve({ ...guestPlayer, displayName: "Angus", playerId: playerId });
 		}, 3000);
 	});
 }
