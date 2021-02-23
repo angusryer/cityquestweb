@@ -11,6 +11,27 @@ type GameObject = {
 	description?: string;
 };
 
+type ActivePlayer = {
+	playerId: string;
+	playerDisplayName: string;
+	playerEmail: string;
+};
+
+type GlobalPreferences = {
+	skipMenu?: boolean;
+};
+
+type GameConfig = {
+	activePlayer: ActivePlayer | null;
+	globalPrefs: GlobalPreferences;
+};
+
+type GameState = {
+	gameId: string;
+};
+
+type Hookback<T> = Dispatch<SetStateAction<T>>;
+
 type Coordinates = [number, number];
 type UpdateLocation = (coords: Coordinates) => Coordinates;
 type Items = Array<GameObject>;

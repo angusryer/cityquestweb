@@ -1,5 +1,4 @@
 import { UserStatus } from "../../models/statusEnums";
-import { GameResponse } from "../../models/types";
 
 export async function initializeGame(): Promise<GameResponse> {
 	const checkResponse = await checkUserAuthStateAndCachedData();

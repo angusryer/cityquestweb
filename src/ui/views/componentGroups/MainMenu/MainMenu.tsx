@@ -1,22 +1,11 @@
-import React from "react";
-import Button from "react-bootstrap/Button";
+import React, { ReactNode } from "react";
 import "./MainMenu.scss";
 
-const MainMenu = () => {
+const MainMenu: React.FC<ReactNode> = ({ children }) => {
 	return (
-		<main className='menu'>
+		<main className='mainmenu'>
 			<h1 className='menu__title'>City Quest</h1>
-			<div>
-				<Button variant='dark' className='menu__btn'>
-					Begin
-				</Button>
-				<Button variant='dark' className='menu__btn'>
-					Learn
-				</Button>
-				<Button variant='dark' className='menu__btn'>
-					Quit
-				</Button>
-			</div>
+			<div>{children}</div>
 		</main>
 	);
 };
