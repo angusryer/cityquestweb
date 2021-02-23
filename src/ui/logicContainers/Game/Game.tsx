@@ -1,14 +1,17 @@
 import React, { useContext } from "react";
+import Button from "react-bootstrap/Button";
 import GameManager, { GameContext } from "../../../context/gameManager";
 
 export default function Game() {
-	const { gameId } = useContext(GameContext);
-	// to reach this component, user should be authenticated
-	// and will have selected Start Game on main menu
+	const gameState = useContext(GameContext);
 	return (
 		<GameManager>
-			{/* All game views implemented according to logic above? */}
-			<p>Main Game: {gameId}</p>
+			<p>
+				Current Player: {gameState.gameConfig?.activePlayer?.playerDisplayName}
+			</p>
+			<Button variant='dark' onClick={gameState.signOut}>
+				Sign Out
+			</Button>
 		</GameManager>
 	);
 }

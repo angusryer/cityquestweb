@@ -19,6 +19,9 @@ type ActivePlayer = {
 
 type GlobalPreferences = {
 	skipMenu?: boolean;
+	cacheVideos?: boolean;
+	audioVolume?: number;
+	userAgreesToShareLocation?: boolean;
 };
 
 type GameConfig = {
@@ -26,9 +29,14 @@ type GameConfig = {
 	globalPrefs: GlobalPreferences;
 };
 
-type GameState = {
-	gameId: string;
-};
+type GameState = Array<{
+	gameId?: string;
+	gameConfig?: GameConfig;
+	gameStartTime?: number;
+	gameElapsedTime?: number;
+	playerLocation?: Coordinates;
+	playerItems?: Items;
+}>;
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;
 
