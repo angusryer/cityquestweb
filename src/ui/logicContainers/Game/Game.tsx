@@ -2,14 +2,19 @@ import React, { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import GameManager, { GameContext } from "../../../context/gameManager";
 
-export default function Game() {
-	const gameState = useContext(GameContext);
+type Props = {
+	signOutHandler: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+};
+
+export default function Game({ signOutHandler }: Props) {
+	const initialGameState = useContext(GameContext)[0];
 	return (
 		<GameManager>
 			<p>
-				Current Player: {gameState.gameConfig?.activePlayer?.playerDisplayName}
+				Current Player:{" "}
+				{initialGameState.gameConfig?.activePlayer?.playerDisplayName}
 			</p>
-			<Button variant='dark' onClick={gameState.signOut}>
+			<Button variant='dark' onClick={signOutHandler}>
 				Sign Out
 			</Button>
 		</GameManager>

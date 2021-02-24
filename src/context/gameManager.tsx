@@ -1,36 +1,26 @@
 import { createContext, ReactNode } from "react";
 import { v4 as uuid } from "uuid";
-import {
-	getCurrentLocation,
-	userAgreesToShareLocation
-} from "../logic/game/gameLogic";
-import { signOut } from "../logic/auth/firebaseAuthApis";
+import { Provider as GameContextProvider } from "jotai";
 
-let gameStateObject: GameState = [{}];
+let initialGameState: InitialGameState = [{}];
 
-export const GameContext: React.Context<any> = createContext(gameStateObject);
+export const GameContext: React.Context<InitialGameState> = createContext(
+	initialGameState
+);
 
 export const configureGameManager = async (
 	gameConfig: GameConfig
-): Promise<void> => {
-	const currentLocation: Coordinates = userAgreesToShareLocation(gameConfig)
-		? await getCurrentLocation()
-		: [0, 0];
-	gameStateObject = [
+): Promise<any> => {
+	initialGameState = [
 		{
 			gameId: uuid(),
 			gameConfig,
 			gameStartTime: Date.now(),
-			gameElapsedTime: 0,
-			playerItems: [],
-			playerLocation: currentLocation
+			timeLastStoppedAt: 0,
+			gameStateSnapshot: {}
 		}
 	];
 	return;
-};
-
-const actions = {
-	signOut: () => signOut()
 };
 
 type Props = {
@@ -38,6 +28,9 @@ type Props = {
 };
 
 export default function GameManager({ children }: Props) {
+	// const gameConfig = atom(gameStateObject);
+	// const playerLocation = atom(async (get) => get(await getCurrentLocation()));
+
 	// ! atomisize various game state ACTIONS using useState,
 	// ! memoize them, assemble them into a single game state
 	// ! snapshot and pass it into the Provider below.
@@ -46,9 +39,5 @@ export default function GameManager({ children }: Props) {
 	// ? any part of the context object?
 	// ? How to test this?
 
-	return (
-		<GameContext.Provider value={{ ...gameStateObject[0], ...actions }}>
-			{children}
-		</GameContext.Provider>
-	);
+	return <GameContextProvider>{children}</GameContextProvider>;
 }

@@ -29,13 +29,12 @@ type GameConfig = {
 	globalPrefs: GlobalPreferences;
 };
 
-type GameState = Array<{
+type InitialGameState = Array<{
 	gameId?: string;
 	gameConfig?: GameConfig;
 	gameStartTime?: number;
-	gameElapsedTime?: number;
-	playerLocation?: Coordinates;
-	playerItems?: Items;
+	timeLastStoppedAt?: number;
+	gameStateSnapshot?: object; 
 }>;
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;

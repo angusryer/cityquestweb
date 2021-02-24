@@ -9,6 +9,11 @@ const formatUserObject = (user: firebase.User): ActivePlayer => {
 	};
 };
 
+/**
+ *  @description Set up an auth listener!
+ *  @returns void
+ *  @callback setCallback(): <Promise<ActivePlayer>>
+ */
 export const onUserStateChange = async (
 	setCallback: Function
 ): Promise<ActivePlayer | null | void> => {
