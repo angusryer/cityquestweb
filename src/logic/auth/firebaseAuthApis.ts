@@ -1,5 +1,4 @@
 import firebase from "../../firebaseConfig";
-import { GameError } from "../error/exceptionLogic";
 
 const formatUserObject = (user: firebase.User): ActivePlayer => {
 	return {
@@ -9,27 +8,29 @@ const formatUserObject = (user: firebase.User): ActivePlayer => {
 	};
 };
 
-/**
- *  @description Set up an auth listener!
- *  @returns void
- *  @callback setCallback(): <Promise<ActivePlayer>>
- */
-export const onUserStateChange = async (
-	setCallback: Function
-): Promise<ActivePlayer | null | void> => {
-	try {
-		firebase.auth().onAuthStateChanged((user: firebase.User | null): void => {
-			if (user) setCallback(formatUserObject(user));
-		});
-	} catch (err) {
-		GameError.logToLocalConsole(err);
-	}
-};
+export async function onUserStateChange(
+	setCallback: Hookback<ActivePlayer | null>
+): Promise<void> {
+	firebase.auth().onAuthStateChanged((user: firebase.User | null) => {
+		if (user) {
+			const player = formatUserObject(user);
+			setCallback(player);
+		}
+	});
+}
 
-export const signInWithPopup = async () => {
+export async function getCurrentUser(): Promise<ActivePlayer | null> {
+	const user: firebase.User | null = await firebase.auth().currentUser;
+	if (user !== null) return formatUserObject(user);
+	return null;
+}
+
+export const signInWithPopup = async (
+	setCallback: Hookback<ActivePlayer | null>
+) => {
 	const authProvider = new firebase.auth.GoogleAuthProvider();
-	const { user } = await firebase.auth().signInWithPopup(authProvider);
-	if (user) return formatUserObject(user);
+	const response = await firebase.auth().signInWithPopup(authProvider);
+	if (response?.user !== null) setCallback(formatUserObject(response.user));
 };
 
 export const signOut = async (): Promise<void> => {

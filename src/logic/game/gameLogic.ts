@@ -3,9 +3,9 @@ export const getCurrentLocation = (): Coordinates => {
 	return [43, 78];
 };
 
-export const shouldShowMainMenu = (globalPrefs: GlobalPreferences): boolean => {
-	if (globalPrefs?.skipMenu) return false;
-	return true;
+export const shouldSkipMainMenu = (globalPrefs: GlobalPreferences): boolean => {
+	if (globalPrefs?.skipMenu === true) return true;
+	return false;
 };
 
 export const userAgreesToShareLocation = (gameConfig: GameConfig): boolean => {

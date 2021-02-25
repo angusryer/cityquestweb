@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import { Provider } from "jotai";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
-import Splash from "./ui/logicContainers/Splash";
-import Auth from "./ui/logicContainers/Auth";
-import Menu from "./ui/logicContainers/Menu";
-import Game from "./ui/logicContainers/Game";
+import GameManager from "./context/gameManager";
 import { onUserStateChange, signOut } from "./logic/auth/firebaseAuthApis";
 import { getGlobalPreferences } from "./logic/db/firebaseDbApis";
-import GameManager, { configureGameManager } from "./context/gameManager";
-import { shouldShowMainMenu } from "./logic/game/gameLogic";
+import { shouldSkipMainMenu } from "./logic/game/gameLogic";
+import Auth from "./ui/logicContainers/Auth";
+import Menu from "./ui/logicContainers/Menu";
+import Splash from "./ui/logicContainers/Splash";
 
 export default function Init() {
 	const [activePlayer, setActivePlayer] = useState<ActivePlayer | null>(null);
@@ -15,52 +15,45 @@ export default function Init() {
 	const [appIsReady, setAppIsReady] = useState<boolean>(false);
 	const [isComingFromGame, setIsComingFromGame] = useState<boolean>(false);
 
-	const initialize = async (): Promise<void> => {
-		await onUserStateChange(setActivePlayer as Function);
-		await getGlobalPreferences(setGlobalPrefs as Function); // TODO This is a stub
-	};
-
-	const signOutHandler = async (
-		isComingFromGame: boolean = false
-	): Promise<void> => {
-		console.log("INIT ==> ", isComingFromGame);
-		await signOut();
-		if (isComingFromGame) setIsComingFromGame(true);
+	const signOutHandler = (): void => {
+		signOut();
+		setAppIsReady(false);
 		setActivePlayer(null);
+		setGlobalPrefs({});
 	};
 
-	const startGame = async (): Promise<void> => {
-		const gameConfig: GameConfig = {
-			activePlayer,
-			globalPrefs
-		};
-		await configureGameManager(gameConfig);
-		setAppIsReady(true);
-	};
-
-	const startGameRef = useRef(startGame);
+	const toggleGamePlay = () => {
+		if (isComingFromGame) setIsComingFromGame(false)
+		setAppIsReady(true)
+	}
 
 	useEffect(() => {
-		initialize();
+		(async () => await onUserStateChange(setActivePlayer))();
 	}, []);
 
 	useEffect(() => {
-		if (activePlayer && globalPrefs) {
-			startGameRef.current();
-		}
-	}, [activePlayer, globalPrefs]);
+		if (activePlayer !== null)
+			getGlobalPreferences(activePlayer.playerId, setGlobalPrefs);
+	}, [activePlayer]);
 
-	if (appIsReady)
-		return (
-			<GameManager>
-				<Game signOutHandler={() => signOutHandler(true)} />
-			</GameManager>
-		);
-	if ((!!activePlayer && shouldShowMainMenu(globalPrefs)) || isComingFromGame) {
-		// fix above is short circuiting and isComingFromGame is never evaluated
+	useEffect(() => {
+		if (shouldSkipMainMenu(globalPrefs) === true) setAppIsReady(true);
+	}, [globalPrefs]);
+
+	if (activePlayer === null) return <Auth setActivePlayer={setActivePlayer} />;
+	if (
+		isComingFromGame ||
+		(activePlayer !== null &&
+			shouldSkipMainMenu(globalPrefs) === false &&
+			appIsReady === false)
+	) {
 		return (
 			<Menu>
-				<Button variant='dark' className='menu__btn' onClick={startGame}>
+				<Button
+					variant='dark'
+					className='menu__btn'
+					onClick={() => toggleGamePlay()}
+				>
 					Begin
 				</Button>
 				<Button variant='dark' className='menu__btn'>
@@ -76,6 +69,19 @@ export default function Init() {
 			</Menu>
 		);
 	}
-	if (!activePlayer) return <Auth setActivePlayer={setActivePlayer} />;
+	if (appIsReady) {
+		return (
+			<Provider>
+				<GameManager
+					gameConfig={{
+						activePlayer,
+						globalPrefs
+					}}
+					signOutHandler={signOutHandler}
+					setIsComingFromGame={setIsComingFromGame}
+				/>
+			</Provider>
+		);
+	}
 	return <Splash />;
 }

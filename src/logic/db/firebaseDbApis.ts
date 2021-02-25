@@ -1,8 +1,18 @@
-// import firebase from '../../firebaseConfig';
+import firebase from "../../firebaseConfig";
 
-export const getGlobalPreferences = async (setGlobalPreferences: Function): Promise<void> => {
-	// await firebase.firestore().collection()
-	setGlobalPreferences({
-		skipMenu: false
-	} as GlobalPreferences);
+const db = firebase.firestore();
+
+export const getGlobalPreferences = async (
+	playerId: string,
+	setGlobalPreferences: Hookback<GlobalPreferences>
+): Promise<void> => {
+	const querySnapshotData = await db.collection("users").get();
+	querySnapshotData.forEach((doc) => {
+		if (doc.id === playerId) {
+			const docData = doc.data();
+			setGlobalPreferences({
+				...docData.globalPrefs
+			});
+		}
+	});
 };

@@ -1,22 +1,56 @@
-import React, { useContext } from "react";
+import React from "react";
 import Button from "react-bootstrap/Button";
-import GameManager, { GameContext } from "../../../context/gameManager";
+import { useAtom } from "jotai";
+import { toggleConfigMenu } from "../../../context/gameActions";
+import { toggleInGameMenu } from "../../../context/gameActions";
+import ConfigMenu from "../../views/componentGroups/ConfigMenu";
+import SvgIcon from "@material-ui/icons/Settings";
+import "./styles/gear.scss";
 
 type Props = {
-	signOutHandler: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+	signOutHandler: () => void;
+	gameState: InitialGameState;
+	setGameState: Hookback<InitialGameState>;
+	setIsComingFromGame: Hookback<boolean>;
 };
 
-export default function Game({ signOutHandler }: Props) {
-	const initialGameState = useContext(GameContext)[0];
+export default function Game({
+	signOutHandler,
+	gameState,
+	setGameState,
+	setIsComingFromGame
+}: Props) {
+	const [toggleConfMenu, setToggleConfMenu] = useAtom(toggleConfigMenu);
+	const [inGameMenu, setInGameMenu] = useAtom(toggleInGameMenu);
+
+	if (toggleConfMenu) return <ConfigMenu gameState={gameState} />;
+
 	return (
-		<GameManager>
-			<p>
-				Current Player:{" "}
-				{initialGameState.gameConfig?.activePlayer?.playerDisplayName}
-			</p>
-			<Button variant='dark' onClick={signOutHandler}>
-				Sign Out
-			</Button>
-		</GameManager>
+		<>
+			<div className="gear">
+				<SvgIcon onClick={() => setInGameMenu(!inGameMenu)} className='gear__icon' />
+				{inGameMenu && (
+					<div className='gear__menu'>
+						<p>
+							Current Player:{" "}
+							{gameState.gameConfig?.activePlayer?.playerDisplayName}
+						</p>
+						<Button variant='dark' onClick={() => signOutHandler()}>
+							Sign Out
+						</Button>
+						<Button variant='dark' onClick={() => setIsComingFromGame(true)}>
+							Main Menu
+						</Button>
+						<Button
+							variant='dark'
+							onClick={() => setToggleConfMenu(!toggleConfMenu)}
+						>
+							Show Config Menu
+						</Button>
+					</div>
+				)}
+			</div>
+			<p>Other Stuff</p>
+		</>
 	);
 }
