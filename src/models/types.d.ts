@@ -33,7 +33,13 @@ type InitialGameState = {
 	gameId?: string;
 	gameConfig?: GameConfig;
 	gameStartTime?: number;
-	gameStateSnapshot?: object;
+	gameStateSnapshot?: SnapShot;
+};
+
+type SnapShot = {
+	playerLocation?: Coordinates;
+	items?: Array<GameObject>;
+	clues?: Array<GameObject>;
 };
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;

@@ -1,5 +1,5 @@
 import { Provider } from "jotai";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import GameManager from "./context/gameManager";
 import { onUserStateChange, signOut } from "./logic/auth/firebaseAuthApis";
@@ -14,16 +14,19 @@ export default function Init() {
 	const [globalPrefs, setGlobalPrefs] = useState<GlobalPreferences>({});
 	const [appIsReady, setAppIsReady] = useState<boolean>(false);
 	const [isComingFromGame, setIsComingFromGame] = useState<boolean>(false);
+	const [isNewGame, setIsNewGame] = useState<boolean>(true);
 
 	const signOutHandler = (): void => {
 		signOut();
 		setAppIsReady(false);
 		setActivePlayer(null);
 		setGlobalPrefs({});
+		setIsNewGame(true);
 	};
 
-	const toggleGamePlay = () => {
+	const toggleGamePlay = (newGame: boolean = true) => {
 		if (isComingFromGame) setIsComingFromGame(false)
+		setIsNewGame(newGame)
 		setAppIsReady(true)
 	}
 
@@ -54,7 +57,14 @@ export default function Init() {
 					className='menu__btn'
 					onClick={() => toggleGamePlay()}
 				>
-					Begin
+					New Game
+				</Button>
+				<Button
+					variant='dark'
+					className='menu__btn'
+					onClick={() => toggleGamePlay(false)}
+				>
+					Load Last Game
 				</Button>
 				<Button variant='dark' className='menu__btn'>
 					Learn
@@ -77,6 +87,7 @@ export default function Init() {
 						activePlayer,
 						globalPrefs
 					}}
+					newGame={isNewGame}
 					signOutHandler={signOutHandler}
 					setIsComingFromGame={setIsComingFromGame}
 				/>

@@ -1,0 +1,16 @@
+@import "../../../globalStyles/mixins";
+
+.ingamemenu {
+	display: flex;
+	justify-content: center;
+
+	&__heading {
+		font-style: italic;
+	}
+
+	&__btn {
+		width: 2rem;
+		height: 2rem;
+		border-radius: 9999px;
+	}
+}
