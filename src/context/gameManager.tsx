@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { v4 as uuid } from "uuid";
 import { useCachedState } from "./gameActions";
 import Game from "../ui/logicContainers/Game";
@@ -6,7 +6,7 @@ import Game from "../ui/logicContainers/Game";
 type Props = {
 	signOutHandler: (isComingFromGame?: boolean) => void;
 	gameConfig: GameConfig;
-	setIsComingFromGame: Hookback<boolean>;
+	setIsComingFromGame: Dispatch<SetStateAction<boolean>>;
 	newGame: boolean;
 };
 
@@ -17,7 +17,8 @@ export default function GameManager({
 	newGame
 }: Props) {
 	const [cachedGameState, setCachedGameState] = useCachedState();
-	const createGameStateObject: any = () => {
+	
+	const createGameStateObject: GameState = () => {
 		if (newGame) {
 			return {
 				gameId: uuid(),
@@ -27,10 +28,10 @@ export default function GameManager({
 			};
 		}
 		return {
-			gameId: "",
+			gameId: cachedGameState.gameId ,
 			gameConfig,
 			gameStartTime: 123,
-			gameStateSnapshot: cachedGameState()
+			gameStateSnapshot: cachedGameState
 		};
 	};
 
@@ -38,7 +39,7 @@ export default function GameManager({
 		<Game
 			signOutHandler={signOutHandler}
 			gameState={createGameStateObject()}
-			saveGameState={saveGameState}
+			setCachedGameState={setCachedGameState}
 			loadGameState={loadGameState}
 			setIsComingFromGame={setIsComingFromGame}
 		/>

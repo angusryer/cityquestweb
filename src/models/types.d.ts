@@ -29,7 +29,7 @@ type GameConfig = {
 	globalPrefs: GlobalPreferences;
 };
 
-type InitialGameState = {
+type GameState = {
 	gameId?: string;
 	gameConfig?: GameConfig;
 	gameStartTime?: number;

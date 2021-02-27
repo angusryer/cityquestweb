@@ -7,7 +7,7 @@ import "./styles/gear.scss";
 
 type Props = {
 	signOutHandler: () => void;
-	gameState: InitialGameState;
+	gameState: GameState;
 	saveGameState: () => void;
 	loadGameState: () => React.CElement<{}, React.Component<{}, any, any>>;
 	setIsComingFromGame: Hookback<boolean>;

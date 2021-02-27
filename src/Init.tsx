@@ -24,9 +24,17 @@ export default function Init() {
 		setIsNewGame(true);
 	};
 
-	const toggleGamePlay = (newGame: boolean = true) => {
-		if (isComingFromGame) setIsComingFromGame(false)
-		setIsNewGame(newGame)
+	const newGame = () => {
+		setAppIsReady(true);
+	};
+
+	const loadGame = () => {
+		setIsNewGame(false);
+		setAppIsReady(true);
+	};
+
+	const toggleGamePlay = () => {
+		setIsComingFromGame(false)
 		setAppIsReady(true)
 	}
 
@@ -52,18 +60,19 @@ export default function Init() {
 	) {
 		return (
 			<Menu>
-				<Button
-					variant='dark'
-					className='menu__btn'
-					onClick={() => toggleGamePlay()}
-				>
+				{isComingFromGame && (
+					<Button
+						variant='dark'
+						className='menu__btn'
+						onClick={() => toggleGamePlay()}
+					>
+						Back to Gameplay
+					</Button>
+				)}
+				<Button variant='dark' className='menu__btn' onClick={() => newGame()}>
 					New Game
 				</Button>
-				<Button
-					variant='dark'
-					className='menu__btn'
-					onClick={() => toggleGamePlay(false)}
-				>
+				<Button variant='dark' className='menu__btn' onClick={() => loadGame()}>
 					Load Last Game
 				</Button>
 				<Button variant='dark' className='menu__btn'>

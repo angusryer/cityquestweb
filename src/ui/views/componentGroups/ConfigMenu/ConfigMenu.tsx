@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { toggleConfigMenu } from "../../../../context/gameActions";
 
 type Props = {
-	gameState: InitialGameState;
+	gameState: GameState;
 };
 
 const ConfigMenu = ({ gameState }: Props) => {
