@@ -2,44 +2,58 @@ import React from "react";
 import { useAtom } from "jotai";
 import { toggleInGameMenu } from "../../../context/gameActions";
 import InGameMenu from "./InGameMenu";
+import EnergyLevel from "./EnergyLevel";
+import Grade from "./Grade";
 import SvgIcon from "@material-ui/icons/Settings";
-import "./styles/gear.scss";
+import "./Game.scss";
 
 type Props = {
 	signOutHandler: () => void;
 	gameState: GameState;
-	saveGameState: () => void;
-	loadGameState: () => React.CElement<{}, React.Component<{}, any, any>>;
 	setIsComingFromGame: Hookback<boolean>;
 };
 
 export default function Game({
 	signOutHandler,
 	gameState,
-	saveGameState,
-	loadGameState,
 	setIsComingFromGame
 }: Props) {
 	const [inGameMenu, setInGameMenu] = useAtom(toggleInGameMenu);
 
-	return (
-		<>
-			<div className='gear'>
+	if (inGameMenu)
+		return (
+			<div className='game__modal'>
 				<SvgIcon
-					onClick={() => setInGameMenu(!inGameMenu)}
-					className='gear__icon'
+					onClick={() => setInGameMenu(false)}
+					className='game__modal-icon'
 				/>
-				{inGameMenu && (
-					<InGameMenu
-						signOutHandler={signOutHandler}
-						gameState={gameState}
-						saveGameState={saveGameState}
-						loadGameState={loadGameState}
-						setIsComingFromGame={setIsComingFromGame}
-					/>
-				)}
+				<InGameMenu
+					signOutHandler={signOutHandler}
+					gameState={gameState}
+					setIsComingFromGame={setIsComingFromGame}
+				/>
 			</div>
-			<p>The Actual Game</p>
-		</>
+		);
+
+	return (
+		<main className='game'>
+			<div className='game__hud'>
+				<EnergyLevel />
+				{/* <ItemsListButton>
+					<ItemsList items={items} />
+				</ItemsListButton> */}
+				<Grade />
+				<SvgIcon
+					onClick={() => setInGameMenu(true)}
+					className='game__hud-icon'
+				/>
+			</div>
+			<div className='game__media'></div>
+			{/**
+			 * <MediaContainer />
+			 * <InfoBar />
+			 * <Map />
+			 */}
+		</main>
 	);
 }

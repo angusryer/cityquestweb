@@ -24,16 +24,16 @@ export default function Init() {
 		setIsNewGame(true);
 	};
 
-	const newGame = () => {
+	const newGame = (): void => {
 		setAppIsReady(true);
 	};
 
-	const loadGame = () => {
+	const loadGame = (): void => {
 		setIsNewGame(false);
 		setAppIsReady(true);
 	};
 
-	const toggleGamePlay = () => {
+	const toggleGamePlay = (): void => {
 		setIsComingFromGame(false)
 		setAppIsReady(true)
 	}

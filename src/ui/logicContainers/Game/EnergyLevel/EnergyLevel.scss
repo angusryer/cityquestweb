@@ -1,0 +1,16 @@
+@import "../../../globalStyles/mixins";
+
+.energylevel {
+	background-color: white;
+	border: 1px solid black;
+	height: 25px;
+	width: 100px;
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: 3px 3px 5px black;
+	margin-left: 10px;
+
+	&__bar {
+		height: 100%;
+	}
+}

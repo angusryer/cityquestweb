@@ -40,6 +40,8 @@ type SnapShot = {
 	playerLocation?: Coordinates;
 	items?: Array<GameObject>;
 	clues?: Array<GameObject>;
+	playerGrade?: string;
+	playerEnergy?: number;
 };
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;

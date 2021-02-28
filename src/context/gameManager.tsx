@@ -16,9 +16,9 @@ export default function GameManager({
 	setIsComingFromGame,
 	newGame
 }: Props) {
-	const [cachedGameState, setCachedGameState] = useCachedState();
-	
-	const createGameStateObject: GameState = () => {
+	const [cachedGameState] = useCachedState();
+
+	const createGameStateObject = (): GameState => {
 		if (newGame) {
 			return {
 				gameId: uuid(),
@@ -28,10 +28,10 @@ export default function GameManager({
 			};
 		}
 		return {
-			gameId: cachedGameState.gameId ,
-			gameConfig,
-			gameStartTime: 123,
-			gameStateSnapshot: cachedGameState
+			gameId: cachedGameState.gameId,
+			gameConfig: cachedGameState.gameConfig,
+			gameStartTime: cachedGameState.gameStartTime,
+			gameStateSnapshot: cachedGameState.gameStateSnapshot
 		};
 	};
 
@@ -39,8 +39,6 @@ export default function GameManager({
 		<Game
 			signOutHandler={signOutHandler}
 			gameState={createGameStateObject()}
-			setCachedGameState={setCachedGameState}
-			loadGameState={loadGameState}
 			setIsComingFromGame={setIsComingFromGame}
 		/>
 	);
