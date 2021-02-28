@@ -1,9 +1,9 @@
 import { useAtom } from "jotai";
-import { playerGrade } from "../../../../context/gameActions";
+import { playerGradeAtom } from "../../../../context/gameActions";
 import "./Grade.scss";
 
 const Grade = () => {
-	const [grade] = useAtom(playerGrade);
+	const [grade] = useAtom(playerGradeAtom);
 	const gradeColor = () => {
 		switch (grade) {
 			case "F":

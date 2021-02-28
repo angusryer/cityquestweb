@@ -1,6 +1,9 @@
 import React from "react";
 import { useAtom } from "jotai";
-import { toggleInGameMenu } from "../../../context/gameActions";
+import {
+	playerEnergyAtom,
+	toggleInGameMenu
+} from "../../../context/gameActions";
 import InGameMenu from "./InGameMenu";
 import EnergyLevel from "./EnergyLevel";
 import Grade from "./Grade";
@@ -19,6 +22,9 @@ export default function Game({
 	setIsComingFromGame
 }: Props) {
 	const [inGameMenu, setInGameMenu] = useAtom(toggleInGameMenu);
+
+	// ! temporary for save game and load game testing
+	const [playerEnergy, setPlayerEnergy] = useAtom(playerEnergyAtom);
 
 	if (inGameMenu)
 		return (
@@ -54,6 +60,15 @@ export default function Game({
 			 * <InfoBar />
 			 * <Map />
 			 */}
+			<div className='game__info'></div>
+			<div className='game__map'>
+				<button type='button' onClick={() => setPlayerEnergy(playerEnergy + 1)}>
+					Increase Energy
+				</button>
+				<button type='button' onClick={() => setPlayerEnergy(playerEnergy - 1)}>
+					Decrease Energy
+				</button>
+			</div>
 		</main>
 	);
 }

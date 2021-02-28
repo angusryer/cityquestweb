@@ -1,9 +1,9 @@
 import { useAtom } from "jotai";
-import { energyLevel } from "../../../../context/gameActions";
+import { playerEnergyAtom } from "../../../../context/gameActions";
 import "./EnergyLevel.scss";
 
 const EnergyLevel = () => {
-	const [energy] = useAtom(energyLevel);
+	const [energy] = useAtom(playerEnergyAtom);
 	const criticalityColor = () => {
 		if (energy <= 15) {
 			return "red";
