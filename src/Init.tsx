@@ -8,25 +8,22 @@ import Game from "./screens/Game";
 import {
 	activePlayerAtom,
 	globalPrefsAtom,
-	isComingFromGameAtom,
-	appIsReadyAtom
+	shouldShowMenuComputed,
+	appIsReadyComputed
 } from "./gameActions";
 
 export default function Init() {
 	const [activePlayer, setActivePlayer] = useAtom(activePlayerAtom);
 	const [globalPrefs, setGlobalPrefs] = useAtom(globalPrefsAtom);
-	const [appIsReady, setAppIsReady] = useAtom(appIsReadyAtom);
-	const [isComingFromGame] = useAtom(isComingFromGameAtom);
+	const [appIsReady, setAppIsReady] = useAtom(appIsReadyComputed);
+	const [shouldShowMenu] = useAtom(shouldShowMenuComputed);
 
 	const setActivePlayerRef = useRef(setActivePlayer);
 	const setGlobalPrefsRef = useRef(setGlobalPrefs);
 	const setAppIsReadyRef = useRef(setAppIsReady);
 
 	useEffect(() => {
-		(async () => {
-			const user = await onUserStateChange();
-			setActivePlayerRef.current(user);
-		})();
+		onUserStateChange(setActivePlayerRef.current);
 	}, []);
 
 	useEffect(() => {
@@ -35,18 +32,12 @@ export default function Init() {
 	}, [activePlayer]);
 
 	useEffect(() => {
-		if (globalPrefs) setAppIsReadyRef.current(true);
+		if (globalPrefs._isLoaded) setAppIsReadyRef.current(true);
 	}, [globalPrefs]);
 
 	if (!activePlayer) return <Auth />;
-	if (
-		isComingFromGame ||
-		(activePlayer && !globalPrefs.skipMenu && !appIsReady)
-	) {
-		return <Menu />;
-	}
-	if (appIsReady) {
-		return <Game />;
-	}
+	// maybe a GameManager here to switch between Menu and Game, and appIsReady belongs to GameManager, and then shouldShowMenu should go inside of Menu
+	if (shouldShowMenu) return <Menu />;
+	if (appIsReady) return <Game />; // see if I can render this outside of Init... not from Menu, but Menu and Game should be siblings
 	return <Splash />;
 }

@@ -12,13 +12,14 @@ const formatUserObject = (user: firebase.User): ActivePlayer => {
 	};
 };
 
-export async function onUserStateChange(): Promise<ActivePlayer | null> {
+export async function onUserStateChange(
+	setCallback: Hookback<ActivePlayer | null>
+): Promise<ActivePlayer | void> {
 	firebase.auth().onAuthStateChanged((user: firebase.User | null) => {
 		if (user !== null) {
-			return formatUserObject(user);
-		} else return null;
+			setCallback(formatUserObject(user));
+		} else setCallback(null)
 	});
-	return null;
 }
 
 export async function getCurrentUser(): Promise<ActivePlayer | null> {
@@ -38,7 +39,6 @@ export const signInWithPopup = async (
 export const signOut = async (): Promise<void> => {
 	await firebase.auth().signOut();
 };
-
 
 //** Firebase Firestore Operations */
 

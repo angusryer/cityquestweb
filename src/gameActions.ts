@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { atom } from "jotai";
+import { useState, useEffect, useRef } from "react";
+import { atom, useAtom } from "jotai";
 import { signOut } from "./firebaseLogic";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
@@ -7,12 +7,13 @@ import { signOut } from "./firebaseLogic";
 export const gameIdAtom = atom<string>("");
 export const gameStartTimeAtom = atom<number>(0);
 export const activePlayerAtom = atom<ActivePlayer | null>(null);
-export const globalPrefsAtom = atom<GlobalPreferences>({});
+export const globalPrefsAtom = atom<GlobalPreferences>({ _isLoaded: false });
 export const appIsReadyAtom = atom<boolean>(false);
 export const isComingFromGameAtom = atom<boolean>(false);
 export const isNewGameAtom = atom<boolean>(true);
 export const toggleConfigMenu = atom<boolean>(false);
 export const toggleInGameMenu = atom<boolean>(false);
+export const gameTimerAtom = atom<number>(0);
 export const playerEnergyAtom = atom<number>(100);
 export const playerScoreAtom = atom<number>(100);
 export const playerLocationAtom = atom<Coordinates>([0, 0]);
@@ -31,9 +32,22 @@ export const playerAgreesToShareLocation = atom(
 export const globalSignOutAction = atom(null, (_get, set) => {
 	set(appIsReadyAtom, false);
 	set(activePlayerAtom, null);
-	set(globalPrefsAtom, {});
+	set(globalPrefsAtom, { _isLoaded: false });
 	set(isNewGameAtom, true);
+	set(isComingFromGameAtom, false);
 	signOut();
+});
+
+export const shouldShowMenuComputed = atom(true, (get, set) => {
+	const isComingFromGame = get(isComingFromGameAtom);
+	const activePlayer = get(activePlayerAtom);
+	const globalPrefs = get(globalPrefsAtom);
+	const appIsReady = get(appIsReadyComputed);
+
+	set(
+		shouldShowMenuComputed,
+		isComingFromGame || (activePlayer && !globalPrefs.skipMenu && !appIsReady)
+	);
 });
 
 export const appIsReadyComputed = atom(false as boolean, (get, set) => {
@@ -42,7 +56,8 @@ export const appIsReadyComputed = atom(false as boolean, (get, set) => {
 	const globalPrefs = get(globalPrefsAtom);
 	set(
 		appIsReadyComputed,
-		appIsReady || (!!activePlayer && !!globalPrefs.skipMenu)
+		appIsReady ||
+			(!!activePlayer && globalPrefs._isLoaded && !!globalPrefs.skipMenu)
 	);
 });
 
@@ -136,43 +151,49 @@ export const shouldSkipMainMenu = (globalPrefs: GlobalPreferences): boolean => {
 	return false;
 };
 
+export const useGameTimer = () => {
+	const [isActive, toggleTimer] = useState(false);
+	const [time, setTimeValue] = useState(0);
+	const resetTimer = () => {
+		toggleTimer(false);
+		setTimeValue(0);
+	};
 
-//** SET UP A TIMER HOOK BELOW */
+	useEffect(() => {
+		if (isActive) {
+			setInterval(() => {
+				setTimeValue((time) => time + 1);
+			}, 1000);
+		}
+		return () => clearInterval();
+	});
+
+	return [time, toggleTimer, resetTimer] as const;
+};
+
+// ? //** SET UP A TIMER HOOK BELOW */
 //** https://css-tricks.com/using-requestanimationframe-with-react-hooks/ */
 
-// const useAnimationFrame = callback => {
-// 	// Use useRef for mutable variables that we want to persist
-// 	// without triggering a re-render on their change
-// 	const requestRef = React.useRef();
-// 	const previousTimeRef = React.useRef();
-	
-// 	const animate = time => {
-// 	  if (previousTimeRef.current != undefined) {
-// 		const deltaTime = time - previousTimeRef.current;
-// 		callback(deltaTime)
-// 	  }
-// 	  previousTimeRef.current = time;
-// 	  requestRef.current = requestAnimationFrame(animate);
-// 	}
-	
-// 	React.useEffect(() => {
-// 	  requestRef.current = requestAnimationFrame(animate);
-// 	  return () => cancelAnimationFrame(requestRef.current);
-// 	}, []); // Make sure the effect runs only once
-//   }
-  
-//   const Counter = () => {
-// 	const [count, setCount] = React.useState(0)
-	
-// 	useAnimationFrame(deltaTime => {
-// 	  // Pass on a function to the setter of the state
-// 	  // to make sure we always have the latest state
-// 	  setCount(prevCount => (prevCount + deltaTime * 0.01) % 100)
-// 	})
-	  
-// 	return <div>{Math.round(count)}</div>
-//   }
+export const useAnimationFrame = (callback: any) => {
+	// Use useRef for mutable variables that we want to persist
+	// without triggering a re-render on their change
+	const requestRef = useRef<number>(0);
+	const previousTimeRef = useRef<number>(0);
 
+	const animate = (time: number) => {
+		if (previousTimeRef.current !== undefined) {
+			const deltaTime = time - previousTimeRef.current;
+			callback(deltaTime);
+		}
+		previousTimeRef.current = time;
+		requestRef.current = requestAnimationFrame(animate);
+	};
+
+	useEffect(() => {
+		requestRef.current = requestAnimationFrame(animate);
+		return () => cancelAnimationFrame(requestRef.current);
+	}, []); // Make sure the effect runs only once
+};
 
 //** GET USER LOCATION PERMISSION AND LOCATION  */
 
@@ -185,7 +206,6 @@ export const shouldSkipMainMenu = (globalPrefs: GlobalPreferences): boolean => {
 // 	}
 // };
 
-
 //** KEEP SYNC WITH CACHE USING REACT-QUERY */
 
 // const useSyncQueryValue = () => {
@@ -196,7 +216,6 @@ export const shouldSkipMainMenu = (globalPrefs: GlobalPreferences): boolean => {
 //     })
 //   })
 // }
-
 
 //** SUBSCRIBE ATOMS TO DATA SOURCE  */
 
