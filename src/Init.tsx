@@ -1,107 +1,52 @@
-import { Provider } from "jotai";
-import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
-import GameManager from "./context/gameManager";
-import { onUserStateChange, signOut } from "./logic/auth/firebaseAuthApis";
-import { getGlobalPreferences } from "./logic/db/firebaseDbApis";
-import { shouldSkipMainMenu } from "./logic/game/gameLogic";
-import Auth from "./ui/logicContainers/Auth";
-import Menu from "./ui/logicContainers/Menu";
-import Splash from "./ui/logicContainers/Splash";
+import React, { useEffect, useRef } from "react";
+import { useAtom } from "jotai";
+import { onUserStateChange, getGlobalPreferences } from "./firebaseLogic";
+import Auth from "./screens/Auth";
+import Menu from "./screens/Menu";
+import Splash from "./screens/Splash";
+import Game from "./screens/Game";
+import {
+	activePlayerAtom,
+	globalPrefsAtom,
+	isComingFromGameAtom,
+	appIsReadyAtom
+} from "./gameActions";
 
 export default function Init() {
-	const [activePlayer, setActivePlayer] = useState<ActivePlayer | null>(null);
-	const [globalPrefs, setGlobalPrefs] = useState<GlobalPreferences>({});
-	const [appIsReady, setAppIsReady] = useState<boolean>(false);
-	const [isComingFromGame, setIsComingFromGame] = useState<boolean>(false);
-	const [isNewGame, setIsNewGame] = useState<boolean>(true);
+	const [activePlayer, setActivePlayer] = useAtom(activePlayerAtom);
+	const [globalPrefs, setGlobalPrefs] = useAtom(globalPrefsAtom);
+	const [appIsReady, setAppIsReady] = useAtom(appIsReadyAtom);
+	const [isComingFromGame] = useAtom(isComingFromGameAtom);
 
-	const signOutHandler = (): void => {
-		signOut();
-		setAppIsReady(false);
-		setActivePlayer(null);
-		setGlobalPrefs({});
-		setIsNewGame(true);
-	};
-
-	const newGame = (): void => {
-		setAppIsReady(true);
-	};
-
-	const loadGame = (): void => {
-		setIsNewGame(false);
-		setAppIsReady(true);
-	};
-
-	const toggleGamePlay = (): void => {
-		setIsComingFromGame(false)
-		setAppIsReady(true)
-	}
+	const setActivePlayerRef = useRef(setActivePlayer);
+	const setGlobalPrefsRef = useRef(setGlobalPrefs);
+	const setAppIsReadyRef = useRef(setAppIsReady);
 
 	useEffect(() => {
-		(async () => await onUserStateChange(setActivePlayer))();
+		(async () => {
+			const user = await onUserStateChange();
+			setActivePlayerRef.current(user);
+		})();
 	}, []);
 
 	useEffect(() => {
-		if (activePlayer !== null)
-			getGlobalPreferences(activePlayer.playerId, setGlobalPrefs);
+		if (activePlayer)
+			getGlobalPreferences(activePlayer.playerId, setGlobalPrefsRef.current);
 	}, [activePlayer]);
 
 	useEffect(() => {
-		if (shouldSkipMainMenu(globalPrefs) === true) setAppIsReady(true);
+		if (globalPrefs) setAppIsReadyRef.current(true);
 	}, [globalPrefs]);
 
-	if (activePlayer === null) return <Auth setActivePlayer={setActivePlayer} />;
+	if (!activePlayer) return <Auth />;
 	if (
 		isComingFromGame ||
-		(activePlayer !== null &&
-			shouldSkipMainMenu(globalPrefs) === false &&
-			appIsReady === false)
+		(activePlayer && !globalPrefs.skipMenu && !appIsReady)
 	) {
-		return (
-			<Menu>
-				{isComingFromGame && (
-					<Button
-						variant='dark'
-						className='menu__btn'
-						onClick={() => toggleGamePlay()}
-					>
-						Back to Gameplay
-					</Button>
-				)}
-				<Button variant='dark' className='menu__btn' onClick={() => newGame()}>
-					New Game
-				</Button>
-				<Button variant='dark' className='menu__btn' onClick={() => loadGame()}>
-					Load Last Game
-				</Button>
-				<Button variant='dark' className='menu__btn'>
-					Learn
-				</Button>
-				<Button
-					variant='dark'
-					className='menu__btn'
-					onClick={() => signOutHandler()}
-				>
-					Sign Out
-				</Button>
-			</Menu>
-		);
+		return <Menu />;
 	}
 	if (appIsReady) {
-		return (
-			<Provider>
-				<GameManager
-					gameConfig={{
-						activePlayer,
-						globalPrefs
-					}}
-					newGame={isNewGame}
-					signOutHandler={signOutHandler}
-					setIsComingFromGame={setIsComingFromGame}
-				/>
-			</Provider>
-		);
+		return <Game />;
 	}
 	return <Splash />;
 }

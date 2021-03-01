@@ -1,18 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from 'jotai';
 import reportWebVitals from "./reportWebVitals";
 import Init from "./Init";
 import firebase from "./firebaseConfig";
-import "./ui/globalStyles/reset.scss";
-import "./ui/globalStyles/base.scss";
-import ErrorBoundary from "./logic/error/ErrorComponent";
+import "./globalStyles/reset.scss";
+import "./globalStyles/base.scss";
+import ErrorBoundary from "./ErrorComponent";
 
 const analytics: firebase.analytics.Analytics = firebase.analytics();
 
 ReactDOM.render(
 	<React.StrictMode>
 		<ErrorBoundary>
-			<Init />
+			<Provider>
+				<Init />
+			</Provider>
 		</ErrorBoundary>
 	</React.StrictMode>,
 	document.getElementById("root")

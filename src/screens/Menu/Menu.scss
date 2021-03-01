@@ -1,0 +1,10 @@
+@import "../../globalStyles/mixins";
+
+.menu {
+	&__title {
+		font-weight: 700;
+	}
+	&__btn {
+		@include menu_button(200px);
+	}
+}
