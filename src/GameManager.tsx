@@ -8,7 +8,7 @@ import {
 	activePlayerAtom,
 	globalPrefsAtom,
 	isComingFromGameAtom,
-    isComingFromAuthAtom,
+	isComingFromAuthAtom,
 	appIsReadyAtom
 } from "./gameActions";
 
@@ -30,12 +30,11 @@ export default function GameManager(): ReactElement {
 		if (globalPrefs._isLoaded) setAppIsReadyRef.current(true);
 	}, [globalPrefs]);
 
-    useEffect(() => {
-
-    }, [])
+	const setIsComingFromAuthRef = useRef(setIsComingFromAuth);
 
 	if (appIsReady) {
 		if (isComingFromAuth) {
+			setIsComingFromAuthRef.current(false);
 			return globalPrefs.skipMenu ? <Game /> : <Menu />;
 		}
 		return isComingFromGame ? <Menu /> : <Game />;

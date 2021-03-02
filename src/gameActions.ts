@@ -36,6 +36,7 @@ export const globalSignOutAction = atom(null, (_get, set) => {
 	set(globalPrefsAtom, { _isLoaded: false });
 	set(isNewGameAtom, true);
 	set(isComingFromGameAtom, false);
+	set(isComingFromAuthAtom, false);
 	signOut();
 });
 
