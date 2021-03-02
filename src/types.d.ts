@@ -38,7 +38,7 @@ type GameState = {
 type GradeAndColor = {
 	letter: string;
 	color: string;
-}
+};
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;
 
@@ -49,3 +49,9 @@ type AddItem = (item: GameObject) => GameResponse;
 type RemoveItem = (itemId: string) => GameResponse;
 type ChangeDisplayName = (displayName: string) => void;
 type VoidAction = () => void;
+
+// export enum OriginatingScreen {
+// 	AUTH = "auth",
+// 	GAME = "game",
+// 	MENU = "menu"
+// }

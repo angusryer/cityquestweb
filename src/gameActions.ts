@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { atom, useAtom } from "jotai";
+import { atom } from "jotai";
 import { signOut } from "./firebaseLogic";
+import { Screen } from "./enums";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
 // export const playerLocation = atom<Coordinates>((get) => return getPlayerLocation())
@@ -9,7 +10,7 @@ export const gameStartTimeAtom = atom<number>(0);
 export const activePlayerAtom = atom<ActivePlayer | null>(null);
 export const globalPrefsAtom = atom<GlobalPreferences>({ _isLoaded: false });
 export const appIsReadyAtom = atom<boolean>(false);
-export const isComingFromGameAtom = atom<boolean>(false);
+export const originatingScreenAtom = atom<number>(Screen.AUTH);
 export const isComingFromAuthAtom = atom<boolean>(true);
 export const isNewGameAtom = atom<boolean>(true);
 export const toggleConfigMenu = atom<boolean>(false);
@@ -35,20 +36,20 @@ export const globalSignOutAction = atom(null, (_get, set) => {
 	set(activePlayerAtom, null);
 	set(globalPrefsAtom, { _isLoaded: false });
 	set(isNewGameAtom, true);
-	set(isComingFromGameAtom, false);
-	set(isComingFromAuthAtom, false);
+	set(originatingScreenAtom, Screen.AUTH);
 	signOut();
 });
 
 export const shouldShowMenuComputed = atom(true, (get, set) => {
-	const isComingFromGame = get(isComingFromGameAtom);
+	const originatingScreen = get(originatingScreenAtom);
 	const activePlayer = get(activePlayerAtom);
 	const globalPrefs = get(globalPrefsAtom);
 	const appIsReady = get(appIsReadyComputed);
 
 	set(
 		shouldShowMenuComputed,
-		isComingFromGame || (activePlayer && !globalPrefs.skipMenu && !appIsReady)
+		originatingScreen === Screen.AUTH ||
+			(activePlayer && !globalPrefs.skipMenu && !appIsReady)
 	);
 });
 
@@ -65,7 +66,7 @@ export const appIsReadyComputed = atom(false as boolean, (get, set) => {
 
 export const startNewGameAction = atom(null, (get, set) => {
 	set(isNewGameAtom, true);
-	set(isComingFromGameAtom, false);
+	set(originatingScreenAtom, Screen.GAME);
 	set(appIsReadyAtom, true);
 });
 

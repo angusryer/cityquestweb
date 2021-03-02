@@ -1,11 +1,12 @@
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
+import { Screen } from "../../enums";
 import {
 	activePlayerAtom,
 	globalSignOutAction,
-	isComingFromGameAtom,
 	toggleConfigMenu,
-	gameStateComputed
+	gameStateComputed,
+	originatingScreenAtom
 } from "../../gameActions";
 import ConfigMenu from "../ConfigMenu";
 import "./InGameMenu.scss";
@@ -14,7 +15,7 @@ const InGameMenu: React.FC = () => {
 	const [toggleConfMenu, setToggleConfMenu] = useAtom(toggleConfigMenu);
 	const [gameState, computeGameState] = useAtom(gameStateComputed);
 	const [activePlayer] = useAtom(activePlayerAtom);
-	const [, setIsComingFromGame] = useAtom(isComingFromGameAtom);
+	const [, setOriginatingScreen] = useAtom(originatingScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
 
 	return (
@@ -35,7 +36,10 @@ const InGameMenu: React.FC = () => {
 					</Button>
 					<Button
 						variant='dark'
-						onClick={() => setIsComingFromGame(true)}
+						onClick={() => {
+							setOriginatingScreen(Screen.MENU);
+							setToggleConfMenu(!toggleConfMenu);
+						}}
 						className='ingamemenu__btn'
 					>
 						Main Menu

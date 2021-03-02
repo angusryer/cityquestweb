@@ -6,23 +6,30 @@ import {
 	toggleInGameMenu,
 	gameIdAtom,
 	gameStartTimeAtom,
-	isNewGameAtom
+	isNewGameAtom,
+	originatingScreenAtom
 } from "../../gameActions";
 import InGameMenu from "../../components/InGameMenu";
 import EnergyLevel from "../../components/EnergyLevel";
 import Grade from "../../components/Grade";
 import SvgIcon from "@material-ui/icons/Settings";
 import "./Game.scss";
+import { Screen } from "../../enums";
 
 export default function Game() {
 	const [inGameMenu, setInGameMenu] = useAtom(toggleInGameMenu);
 	const [isNewGame] = useAtom(isNewGameAtom);
+	const [, setOriginatingScreen] = useAtom(originatingScreenAtom);
 	const [, setGameId] = useAtom(gameIdAtom);
 	const [, setGameStartTime] = useAtom(gameStartTimeAtom);
 
+	const setOriginatingScreenRef = useRef(setOriginatingScreen);
+	useEffect(() => {
+		setOriginatingScreenRef.current(Screen.GAME);
+	}, []);
+
 	const setGameIdRef = useRef(setGameId);
 	const setGameStartTimeRef = useRef(setGameStartTime);
-
 	useEffect(() => {
 		if (isNewGame) {
 			setGameIdRef.current(uuid());

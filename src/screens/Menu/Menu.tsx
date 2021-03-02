@@ -1,27 +1,36 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import { useAtom } from "jotai";
 import {
 	globalSignOutAction,
-	isComingFromGameAtom,
 	startNewGameAction,
-	loadLastGameAction
+	loadLastGameAction,
+	originatingScreenAtom
 } from "../../gameActions";
+import { Screen } from "../../enums";
 
 export default function Menu() {
-	const [isComingFromGame, setIsComingFromGame] = useAtom(isComingFromGameAtom);
+	const [originatingScreen, setOriginatingScreen] = useAtom(
+		originatingScreenAtom
+	);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
 	const [, startNewGame] = useAtom(startNewGameAction);
 	const [, loadLastGame] = useAtom(loadLastGameAction);
+
+	const setOriginatingScreenRef = useRef(setOriginatingScreen);
+	useEffect(() => {
+		setOriginatingScreenRef.current(Screen.GAME);
+	}, []);
+
 	return (
 		<main className='menu'>
 			<h1 className='menu__title'>City Quest</h1>
 			<div>
-				{isComingFromGame && (
+				{originatingScreen === Screen.GAME && (
 					<Button
 						variant='dark'
 						className='menu__btn'
-						onClick={() => setIsComingFromGame(!isComingFromGame)}
+						onClick={() => setOriginatingScreenRef.current(Screen.MENU)}
 					>
 						Back to Gameplay
 					</Button>
