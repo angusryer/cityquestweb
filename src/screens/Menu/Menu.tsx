@@ -11,8 +11,8 @@ import {
 export default function Menu() {
 	const [isComingFromGame, setIsComingFromGame] = useAtom(isComingFromGameAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
-	const [, loadLastGame] = useAtom(loadLastGameAction);
 	const [, startNewGame] = useAtom(startNewGameAction);
+	const [, loadLastGame] = useAtom(loadLastGameAction);
 	return (
 		<main className='menu'>
 			<h1 className='menu__title'>City Quest</h1>
@@ -21,7 +21,7 @@ export default function Menu() {
 					<Button
 						variant='dark'
 						className='menu__btn'
-						onClick={() => setIsComingFromGame(false)}
+						onClick={() => setIsComingFromGame(!isComingFromGame)}
 					>
 						Back to Gameplay
 					</Button>
@@ -40,7 +40,15 @@ export default function Menu() {
 				>
 					Load Last Game
 				</Button>
-				<Button variant='dark' className='menu__btn'>
+				<Button
+					variant='dark'
+					className='menu__btn'
+					onClick={() => {
+						console.log(
+							"https://console.firebase.google.com/u/0/project/city-quest-native/overview"
+						);
+					}}
+				>
 					Learn
 				</Button>
 				<Button

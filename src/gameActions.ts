@@ -10,6 +10,7 @@ export const activePlayerAtom = atom<ActivePlayer | null>(null);
 export const globalPrefsAtom = atom<GlobalPreferences>({ _isLoaded: false });
 export const appIsReadyAtom = atom<boolean>(false);
 export const isComingFromGameAtom = atom<boolean>(false);
+export const isComingFromAuthAtom = atom<boolean>(true);
 export const isNewGameAtom = atom<boolean>(true);
 export const toggleConfigMenu = atom<boolean>(false);
 export const toggleInGameMenu = atom<boolean>(false);
@@ -63,6 +64,7 @@ export const appIsReadyComputed = atom(false as boolean, (get, set) => {
 
 export const startNewGameAction = atom(null, (get, set) => {
 	set(isNewGameAtom, true);
+	set(isComingFromGameAtom, false);
 	set(appIsReadyAtom, true);
 });
 

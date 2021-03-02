@@ -19,7 +19,7 @@ type ActivePlayer = {
 };
 
 type GlobalPreferences = {
-	_isLoaded: boolean;
+	readonly _isLoaded: boolean;
 	skipMenu?: boolean;
 	cacheVideos?: boolean;
 	audioVolume?: number;
