@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import {
+	playerDataAtom,
 	playerEnergyAtom,
 	toggleInGameMenuAtom,
 	toggleConfigMenuAtom,
@@ -23,8 +24,7 @@ export default function Game() {
 
 	const loadGameStateRef = useRef(loadGameState);
 	useEffect(() => {
-		loadGameStateRef.current();
-		console.log(playerEnergy)
+		if (!isNewGame) loadGameStateRef.current();
 	}, [isNewGame]);
 
 	return (

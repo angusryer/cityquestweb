@@ -1,4 +1,5 @@
 import firebase from "./firebaseConfig";
+import { activePlayerAtom } from "./gameActions";
 
 const db = firebase.firestore();
 
@@ -43,15 +44,10 @@ export const getPlayerData = async (
 	playerId: string,
 	setPlayerData: Hookback<PlayerData>
 ): Promise<void> => {
-	const querySnapshotData = await db.collection("users").get();
-	querySnapshotData.forEach((doc) => {
-		if (doc.id === playerId) {
-			const docData = doc.data();
-			setPlayerData({
-				playerData: docData.playerData,
-				lastGameState: docData.lastGameState
-			});
-		}
+	const data = await (await db.collection("users").doc(playerId).get()).data();
+	setPlayerData({
+		playerData: data?.playerData,
+		lastGameState: data?.lastGameState
 	});
 };
 
@@ -59,14 +55,10 @@ export const storeGameInDb = async (
 	gameStateObject: GameState,
 	playerId: string
 ): Promise<void> => {
-	const querySnapshotData = await db.collection("users").get();
-	querySnapshotData.forEach((doc) => {
-		if (doc.id === playerId) {
-			db.collection("users")
-				.doc(doc.id)
-				.update({
-					lastGameState: { ...gameStateObject }
-				});
-		}
+	const playerData = await (
+		await db.collection("users").doc(playerId).get()
+	).data();
+	playerData?.update({
+		lastGameState: { ...gameStateObject }
 	});
 };

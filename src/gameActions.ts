@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { atom } from "jotai";
-import { useAtomCallback } from "jotai/utils";
 import { v4 as uuid } from "uuid";
 import { signOut, storeGameInDb } from "./firebaseLogic";
 import { Screen } from "./enums";
@@ -26,34 +25,41 @@ export const playerItemsAtom = atom<Array<GameObject>>([
 ]);
 
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
-// TODO Maybe I can implement useAtomCallback from https://github.com/pmndrs/jotai/issues/60#issuecomment-707385930
-export const loadGameStateAction = atom(null, async (get, set) => {
-	const isNewGame = get(isNewGameAtom);
-	const activePlayer = get(activePlayerAtom);
-	const playerData = get(playerDataAtom);
-	if (activePlayer && playerData) {
-		const { lastGameState } = playerData;
-		set(gameIdAtom, isNewGame ? uuid() : lastGameState.gameId || uuid());
-		set(
-			gameStartTimeAtom,
-			isNewGame ? Date.now() : lastGameState.gameStartTime || Date.now()
-		);
-		set(
-			playerLocationAtom,
-			isNewGame ? [0, 0] : lastGameState.playerLocation || [0, 0]
-		);
-		set(playerEnergyAtom, isNewGame ? 100 : lastGameState.playerEnergy || 100);
-		set(playerScoreAtom, isNewGame ? 100 : lastGameState.playerScore || 100);
-		set(
-			playerItemsAtom,
-			isNewGame
-				? [{ id: "1", name: "Museum Hours", type: "Clue" }]
-				: lastGameState.playerItems || [
-						{ id: "1", name: "Museum Hours", type: "Clue" }
-				  ]
-		);
+// TODO Maybe I can implement useAtomCallback from https://github.com/pmndrs/jotai/issues/60#issuecomment-707385930 or https://github.com/pmndrs/jotai/pull/140
+// export const loadGameStateActionNew = useAtomCallback((get, set, setGameStateCallback) => {???????????????????????????????????????
+
+// })
+export const loadGameStateAction = atom(null, (get, set) => {
+		const isNewGame = get(isNewGameAtom);
+		const playerData = get(playerDataAtom);
+		const getAndSetSavedGame = async () => {
+			if (playerData) {
+				const { lastGameState } = playerData;
+				set(gameIdAtom, isNewGame ? uuid() : lastGameState.gameId || uuid());
+				set(gameStartTimeAtom, isNewGame ? Date.now() : lastGameState.gameStartTime || Date.now());
+				set(playerLocationAtom, isNewGame ? [0, 0] : lastGameState.playerLocation || [0, 0]);
+				set(playerEnergyAtom, isNewGame ? 100 : lastGameState.playerEnergy || 100);
+				set(playerScoreAtom, isNewGame ? 100 : lastGameState.playerScore || 100);
+				set(playerItemsAtom, isNewGame
+						? [{ id: "1", name: "Museum Hours", type: "Clue" }]
+						: lastGameState.playerItems || [{ id: "1", name: "Museum Hours", type: "Clue" }]
+				);
+			}
+		}
+		getAndSetSavedGame();
 	}
-});
+);
+
+const fetchCountAtom = atom(
+	get => get(countAtom),
+	(_get, set, url) => {
+	  const fetchData = async () => {
+		const response = await fetch(url)
+		set(countAtom, (await response.json()).count)
+	  }
+	  fetchData()
+	}
+  )
 
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
 export const saveGameStateAction = atom({} as GameState, (get, set) => {
