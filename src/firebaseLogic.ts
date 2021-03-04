@@ -40,7 +40,8 @@ export const signOut = async (): Promise<void> => {
 
 //** Firebase Firestore Operations */
 
-export const getPlayerData = async (
+// TODO replace all instances of getPlayerData in codebase with getAndSetPlayerData
+export const getAndSetPlayerData = async (
 	playerId: string,
 	setPlayerData: Hookback<PlayerData>
 ): Promise<void> => {
@@ -49,6 +50,15 @@ export const getPlayerData = async (
 		playerData: data?.playerData,
 		lastGameState: data?.lastGameState
 	});
+};
+
+// ! don't replace the name of this function as the above TODO suggests
+export const getPlayerData = async (
+	playerId: string,
+): Promise<PlayerData | null> => {
+	const data = await (await db.collection("users").doc(playerId).get()).data();
+	if (data) return data.playerData;
+	return null;
 };
 
 export const storeGameInDb = async (
