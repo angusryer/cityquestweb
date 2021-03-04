@@ -4,3 +4,14 @@
     min-width: fit-content;
     margin: 3px auto;
 }
+
+@mixin modal_background($opacity: 0.5) {
+    position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba($color: #000000, $alpha: $opacity);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}

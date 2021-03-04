@@ -4,69 +4,56 @@ import { Screen } from "../../enums";
 import {
 	activePlayerAtom,
 	globalSignOutAction,
-	toggleConfigMenu,
-	gameStateComputed,
-	originatingScreenAtom
+	toggleConfigMenuAtom,
+	saveGameStateAction,
+	activeScreenAtom
 } from "../../gameActions";
 import ConfigMenu from "../ConfigMenu";
 import "./InGameMenu.scss";
 
 const InGameMenu: React.FC = () => {
-	const [toggleConfMenu, setToggleConfMenu] = useAtom(toggleConfigMenu);
-	const [gameState, computeGameState] = useAtom(gameStateComputed);
+	const [configMenu, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [activePlayer] = useAtom(activePlayerAtom);
-	const [, setOriginatingScreen] = useAtom(originatingScreenAtom);
+	const [, saveGameState] = useAtom(saveGameStateAction);
+	const [, setActiveScreen] = useAtom(activeScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
 
 	return (
 		<div className='ingamemenu'>
-			{toggleConfMenu ? (
-				<ConfigMenu />
-			) : (
-				<>
-					<p className='ingamemenu__heading'>
-						Current Player: {activePlayer?.playerDisplayName}
-					</p>
-					<Button
-						variant='dark'
-						onClick={() => signOutHandler()}
-						className='ingamemenu__btn'
-					>
-						Sign Out
-					</Button>
-					<Button
-						variant='dark'
-						onClick={() => {
-							setOriginatingScreen(Screen.MENU);
-							setToggleConfMenu(!toggleConfMenu);
-						}}
-						className='ingamemenu__btn'
-					>
-						Main Menu
-					</Button>
-					<Button
-						variant='dark'
-						onClick={() => computeGameState()}
-						className='ingamemenu__btn'
-					>
-						Save Game
-					</Button>
-					<Button
-						variant='dark'
-						onClick={() => console.log(gameState)}
-						className='ingamemenu__btn'
-					>
-						Load Last Saved Game
-					</Button>
-					<Button
-						variant='dark'
-						onClick={() => setToggleConfMenu(!toggleConfMenu)}
-						className='ingamemenu__btn'
-					>
-						Show Config Menu
-					</Button>
-				</>
-			)}
+			{configMenu && <ConfigMenu />}
+			<p className='ingamemenu__heading'>
+				Current Player: {activePlayer?.playerDisplayName}
+			</p>
+			<Button
+				variant='dark'
+				onClick={() => signOutHandler()}
+				className='ingamemenu__btn'
+			>
+				Sign Out
+			</Button>
+			<Button
+				variant='dark'
+				onClick={() => {
+					setActiveScreen(Screen.MENU);
+				}}
+				className='ingamemenu__btn'
+			>
+				Main Menu
+			</Button>
+			<Button
+				variant='dark'
+				onClick={() => saveGameState()}
+				className='ingamemenu__btn'
+			>
+				Save Game
+			</Button>
+			<Button
+				variant='dark'
+				onClick={() => toggleConfigMenu(!configMenu)}
+				className='ingamemenu__btn'
+			>
+				Show Config Menu
+			</Button>
 		</div>
 	);
 };

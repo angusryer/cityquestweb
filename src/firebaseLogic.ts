@@ -18,7 +18,7 @@ export async function onUserStateChange(
 	firebase.auth().onAuthStateChanged((user: firebase.User | null) => {
 		if (user !== null) {
 			setCallback(formatUserObject(user));
-		} else setCallback(null)
+		} else setCallback(null);
 	});
 }
 
@@ -28,12 +28,9 @@ export async function getCurrentUser(): Promise<ActivePlayer | null> {
 	return null;
 }
 
-export const signInWithPopup = async (
-	setCallback: Hookback<ActivePlayer | null>
-) => {
+export const signInWithPopup = async (): Promise<void> => {
 	const authProvider = new firebase.auth.GoogleAuthProvider();
-	const response = await firebase.auth().signInWithPopup(authProvider);
-	if (response?.user !== null) setCallback(formatUserObject(response.user));
+	await firebase.auth().signInWithPopup(authProvider);
 };
 
 export const signOut = async (): Promise<void> => {
@@ -42,17 +39,34 @@ export const signOut = async (): Promise<void> => {
 
 //** Firebase Firestore Operations */
 
-export const getGlobalPreferences = async (
+export const getPlayerData = async (
 	playerId: string,
-	setGlobalPreferences: Hookback<GlobalPreferences>
+	setPlayerData: Hookback<PlayerData>
 ): Promise<void> => {
 	const querySnapshotData = await db.collection("users").get();
 	querySnapshotData.forEach((doc) => {
 		if (doc.id === playerId) {
 			const docData = doc.data();
-			setGlobalPreferences({
-				...docData.globalPrefs
+			setPlayerData({
+				playerData: docData.playerData,
+				lastGameState: docData.lastGameState
 			});
+		}
+	});
+};
+
+export const storeGameInDb = async (
+	gameStateObject: GameState,
+	playerId: string
+): Promise<void> => {
+	const querySnapshotData = await db.collection("users").get();
+	querySnapshotData.forEach((doc) => {
+		if (doc.id === playerId) {
+			db.collection("users")
+				.doc(doc.id)
+				.update({
+					lastGameState: { ...gameStateObject }
+				});
 		}
 	});
 };

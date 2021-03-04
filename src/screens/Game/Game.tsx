@@ -1,84 +1,74 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
-import { v4 as uuid } from "uuid";
 import {
 	playerEnergyAtom,
-	toggleInGameMenu,
-	gameIdAtom,
-	gameStartTimeAtom,
+	toggleInGameMenuAtom,
+	toggleConfigMenuAtom,
 	isNewGameAtom,
-	originatingScreenAtom
+	loadGameStateAction
 } from "../../gameActions";
 import InGameMenu from "../../components/InGameMenu";
 import EnergyLevel from "../../components/EnergyLevel";
 import Grade from "../../components/Grade";
 import SvgIcon from "@material-ui/icons/Settings";
 import "./Game.scss";
-import { Screen } from "../../enums";
 
 export default function Game() {
-	const [inGameMenu, setInGameMenu] = useAtom(toggleInGameMenu);
+	const [inGameMenu, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
 	const [isNewGame] = useAtom(isNewGameAtom);
-	const [, setOriginatingScreen] = useAtom(originatingScreenAtom);
-	const [, setGameId] = useAtom(gameIdAtom);
-	const [, setGameStartTime] = useAtom(gameStartTimeAtom);
+	const [, loadGameState] = useAtom(loadGameStateAction);
+	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 
-	const setOriginatingScreenRef = useRef(setOriginatingScreen);
-	useEffect(() => {
-		setOriginatingScreenRef.current(Screen.GAME);
-	}, []);
-
-	const setGameIdRef = useRef(setGameId);
-	const setGameStartTimeRef = useRef(setGameStartTime);
-	useEffect(() => {
-		if (isNewGame) {
-			setGameIdRef.current(uuid());
-			setGameStartTimeRef.current(Date.now());
-		}
-	}, [isNewGame]);
-
-	// ! temporary for save game and load game testing
 	const [playerEnergy, setPlayerEnergy] = useAtom(playerEnergyAtom);
 
-	if (inGameMenu)
-		return (
-			<div className='game__modal'>
-				<SvgIcon
-					onClick={() => setInGameMenu(false)}
-					className='game__modal-icon'
-				/>
-				<InGameMenu />
-			</div>
-		);
+	const loadGameStateRef = useRef(loadGameState);
+	useEffect(() => {
+		loadGameStateRef.current();
+		console.log(playerEnergy)
+	}, [isNewGame]);
 
 	return (
 		<main className='game'>
-			<div className='game__hud'>
+			<SvgIcon
+				className='game__modal-icon'
+				onClick={() => {
+					toggleInGameMenu(!inGameMenu);
+					toggleConfigMenu(false);
+				}}
+			/>
+			{inGameMenu && <InGameMenu />}
+			<section className='game__hud'>
 				<EnergyLevel />
 				{/* <ItemsListButton>
 					<ItemsList items={items} />
 				</ItemsListButton> */}
 				<Grade />
-				<SvgIcon
-					onClick={() => setInGameMenu(true)}
-					className='game__hud-icon'
-				/>
-			</div>
-			<div className='game__media'></div>
+			</section>
+			<section className='game__media'></section>
 			{/**
 			 * <MediaContainer />
 			 * <InfoBar />
 			 * <Map />
 			 */}
-			<div className='game__info'></div>
-			<div className='game__map'>
-				<button type='button' onClick={() => setPlayerEnergy(playerEnergy + 1)}>
+			<section className='game__info'></section>
+			<section className='game__map'>
+				<button
+					type='button'
+					onClick={() =>
+						setPlayerEnergy(playerEnergy === 100 ? 100 : playerEnergy + 1)
+					}
+				>
 					Increase Energy
 				</button>
-				<button type='button' onClick={() => setPlayerEnergy(playerEnergy - 1)}>
+				<button
+					type='button'
+					onClick={() =>
+						setPlayerEnergy(playerEnergy === 0 ? 0 : playerEnergy - 1)
+					}
+				>
 					Decrease Energy
 				</button>
-			</div>
+			</section>
 		</main>
 	);
 }

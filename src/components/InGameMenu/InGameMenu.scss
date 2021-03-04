@@ -1,12 +1,7 @@
 @import "../../globalStyles/mixins";
 
 .ingamemenu {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	@include modal_background;
 
 	&__heading {
 		font-style: italic;

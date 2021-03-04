@@ -3,32 +3,36 @@ import Button from "react-bootstrap/Button";
 import { useAtom } from "jotai";
 import {
 	activePlayerAtom,
-	gameStateComputed,
-	toggleConfigMenu,
-	globalPrefsAtom,
-	gameIdAtom,
-	gameStartTimeAtom
+	saveGameStateAction,
+	toggleConfigMenuAtom,
+	playerDataAtom,
 } from "../../gameActions";
+import { flatten } from "../../helpers";
+import "./ConfigMenu.scss";
 
 const ConfigMenu = () => {
-	const [toggleConfMenu, setToggleConfMenu] = useAtom(toggleConfigMenu);
-	const [gameState] = useAtom(gameStateComputed);
+	const [configMenu, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
+	const [gameState] = useAtom(saveGameStateAction);
 	const [activePlayer] = useAtom(activePlayerAtom);
-	const [globalPrefs] = useAtom(globalPrefsAtom);
-	const [gameId] = useAtom(gameIdAtom);
-	const [gameStartTime] = useAtom(gameStartTimeAtom);
-	
+	const [playerData] = useAtom(playerDataAtom);
+
+	const listedProperties = (obj: any) => {
+		const entries = flatten(obj);
+		const elements = Object.entries(entries).map(([key, value], i) => {
+			return <li key={i} className="configmenu__li">{`${key} ==> ${value}`}</li>;
+		});
+		return elements;
+	};
+
 	return (
 		<div className='configmenu'>
-			<Button variant='dark' onClick={() => setToggleConfMenu(!toggleConfMenu)}>
-				Show Config Menu
+			<Button variant='dark' onClick={() => toggleConfigMenu(!configMenu)}>
+				Toggle Debug Menu
 			</Button>
-			<ul>
-				<li>Game ID: {gameId}</li>
-				<li>Game Started: {gameStartTime}</li>
-				<li>Active Player: {JSON.stringify(activePlayer, null, " ")}</li>
-				<li>Global Config: {JSON.stringify(globalPrefs, null, " ")}</li>
-				<li>Latest Snapshot: {JSON.stringify(gameState, null, " ")}</li>
+			<ul className="configmenu__ul">
+				{listedProperties(activePlayer)}
+				{listedProperties(playerData)}
+				{listedProperties(gameState)}
 			</ul>
 		</div>
 	);

@@ -1,20 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { atom } from "jotai";
-import { signOut } from "./firebaseLogic";
+import { useAtomCallback } from "jotai/utils";
+import { v4 as uuid } from "uuid";
+import { signOut, storeGameInDb } from "./firebaseLogic";
 import { Screen } from "./enums";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
 // export const playerLocation = atom<Coordinates>((get) => return getPlayerLocation())
+export const activePlayerAtom = atom<ActivePlayer | null>(null);
+export const playerDataAtom = atom<PlayerData | null>(null);
+export const activeScreenAtom = atom<number>(Screen.AUTH);
+export const isNewGameAtom = atom<boolean>(true);
+export const toggleConfigMenuAtom = atom<boolean>(false);
+export const toggleInGameMenuAtom = atom<boolean>(false);
+
+//** In-game state atoms--add these to all the save and load actions below */
 export const gameIdAtom = atom<string>("");
 export const gameStartTimeAtom = atom<number>(0);
-export const activePlayerAtom = atom<ActivePlayer | null>(null);
-export const globalPrefsAtom = atom<GlobalPreferences>({ _isLoaded: false });
-export const appIsReadyAtom = atom<boolean>(false);
-export const originatingScreenAtom = atom<number>(Screen.AUTH);
-export const isComingFromAuthAtom = atom<boolean>(true);
-export const isNewGameAtom = atom<boolean>(true);
-export const toggleConfigMenu = atom<boolean>(false);
-export const toggleInGameMenu = atom<boolean>(false);
 export const gameTimerAtom = atom<number>(0);
 export const playerEnergyAtom = atom<number>(100);
 export const playerScoreAtom = atom<number>(100);
@@ -22,6 +24,53 @@ export const playerLocationAtom = atom<Coordinates>([0, 0]);
 export const playerItemsAtom = atom<Array<GameObject>>([
 	{ id: "1", name: "Museum Hours", type: "Clue" }
 ]);
+
+//** KEEP UPDATING AS NEW ATOMS ARE ADDED */
+// TODO Maybe I can implement useAtomCallback from https://github.com/pmndrs/jotai/issues/60#issuecomment-707385930
+export const loadGameStateAction = atom(null, async (get, set) => {
+	const isNewGame = get(isNewGameAtom);
+	const activePlayer = get(activePlayerAtom);
+	const playerData = get(playerDataAtom);
+	if (activePlayer && playerData) {
+		const { lastGameState } = playerData;
+		set(gameIdAtom, isNewGame ? uuid() : lastGameState.gameId || uuid());
+		set(
+			gameStartTimeAtom,
+			isNewGame ? Date.now() : lastGameState.gameStartTime || Date.now()
+		);
+		set(
+			playerLocationAtom,
+			isNewGame ? [0, 0] : lastGameState.playerLocation || [0, 0]
+		);
+		set(playerEnergyAtom, isNewGame ? 100 : lastGameState.playerEnergy || 100);
+		set(playerScoreAtom, isNewGame ? 100 : lastGameState.playerScore || 100);
+		set(
+			playerItemsAtom,
+			isNewGame
+				? [{ id: "1", name: "Museum Hours", type: "Clue" }]
+				: lastGameState.playerItems || [
+						{ id: "1", name: "Museum Hours", type: "Clue" }
+				  ]
+		);
+	}
+});
+
+//** KEEP UPDATING AS NEW ATOMS ARE ADDED */
+export const saveGameStateAction = atom({} as GameState, (get, set) => {
+	const activePlayer = get(activePlayerAtom);
+	const snapshot: GameState = {
+		gameId: get(gameIdAtom),
+		gameStartTime: get(gameStartTimeAtom),
+		playerLocation: get(playerLocationAtom),
+		playerEnergy: get(playerEnergyAtom),
+		playerScore: get(playerScoreAtom),
+		playerItems: get(playerItemsAtom)
+	};
+	if (activePlayer) {
+		storeGameInDb(snapshot, activePlayer.playerId);
+	}
+	set(saveGameStateAction, snapshot);
+});
 
 export const playerAgreesToShareLocation = atom(
 	false as boolean,
@@ -32,59 +81,26 @@ export const playerAgreesToShareLocation = atom(
 );
 
 export const globalSignOutAction = atom(null, (_get, set) => {
-	set(appIsReadyAtom, false);
 	set(activePlayerAtom, null);
-	set(globalPrefsAtom, { _isLoaded: false });
+	set(playerDataAtom, null);
 	set(isNewGameAtom, true);
-	set(originatingScreenAtom, Screen.AUTH);
+	set(toggleConfigMenuAtom, false);
+	set(activeScreenAtom, Screen.AUTH);
 	signOut();
 });
 
-export const shouldShowMenuComputed = atom(true, (get, set) => {
-	const originatingScreen = get(originatingScreenAtom);
-	const activePlayer = get(activePlayerAtom);
-	const globalPrefs = get(globalPrefsAtom);
-	const appIsReady = get(appIsReadyComputed);
-
-	set(
-		shouldShowMenuComputed,
-		originatingScreen === Screen.AUTH ||
-			(activePlayer && !globalPrefs.skipMenu && !appIsReady)
-	);
-});
-
-export const appIsReadyComputed = atom(false as boolean, (get, set) => {
-	const appIsReady = get(appIsReadyAtom);
-	const activePlayer = get(activePlayerAtom);
-	const globalPrefs = get(globalPrefsAtom);
-	set(
-		appIsReadyComputed,
-		appIsReady ||
-			(!!activePlayer && globalPrefs._isLoaded && !!globalPrefs.skipMenu)
-	);
-});
-
-export const startNewGameAction = atom(null, (get, set) => {
+export const startNewGameAction = atom(null, (_get, set) => {
 	set(isNewGameAtom, true);
-	set(originatingScreenAtom, Screen.GAME);
-	set(appIsReadyAtom, true);
+	set(toggleConfigMenuAtom, false);
+	set(toggleInGameMenuAtom, false);
+	set(activeScreenAtom, Screen.GAME);
 });
 
-export const loadLastGameAction = atom(null, (get, set) => {
+export const loadLastGameAction = atom(null, (_get, set) => {
 	set(isNewGameAtom, false);
-	set(appIsReadyAtom, true);
-});
-
-export const gameStateComputed = atom({} as GameState, (get, set) => {
-	const snapshot: GameState = {
-		gameId: get(gameIdAtom),
-		gameStartTime: get(gameStartTimeAtom),
-		playerLocation: get(playerLocationAtom),
-		playerEnergy: get(playerEnergyAtom),
-		playerScore: get(playerScoreAtom),
-		playerItems: get(playerItemsAtom)
-	};
-	set(gameStateComputed, snapshot);
+	set(toggleConfigMenuAtom, false);
+	set(toggleInGameMenuAtom, false);
+	set(activeScreenAtom, Screen.GAME);
 });
 
 export const computedGradeAndColor = atom(
@@ -150,8 +166,8 @@ export const getCurrentLocation = (): Coordinates => {
 	return [43, 78];
 };
 
-export const shouldSkipMainMenu = (globalPrefs: GlobalPreferences): boolean => {
-	if (globalPrefs?.skipMenu === true) return true;
+export const shouldSkipMainMenu = (data: PlayerData): boolean => {
+	if (data?.playerData.skipMenu === true) return true;
 	return false;
 };
 
@@ -202,8 +218,8 @@ export const useAnimationFrame = (callback: any) => {
 //** GET USER LOCATION PERMISSION AND LOCATION  */
 
 // export const userAgreesToShareLocation = (gameConfig: GameConfig): boolean => {
-// 	if (gameConfig?.globalPrefs?.userAgreesToShareLocation !== undefined) {
-// 		return gameConfig.globalPrefs.userAgreesToShareLocation;
+// 	if (gameConfig?.playerData?.userAgreesToShareLocation !== undefined) {
+// 		return gameConfig.playerData.userAgreesToShareLocation;
 // 	} else {
 // 		// TODO get the user's permission to access their location
 // 		return true;

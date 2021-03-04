@@ -18,15 +18,17 @@ type ActivePlayer = {
 	playerEmail: string;
 };
 
-type GlobalPreferences = {
-	readonly _isLoaded: boolean;
-	skipMenu?: boolean;
-	cacheVideos?: boolean;
-	audioVolume?: number;
-	userAgreesToShareLocation?: boolean;
+type PlayerData = {
+	playerData: ActivePlayer & {
+		skipMenu?: boolean;
+		cacheVideos?: boolean;
+		audioVolume?: number;
+		userAgreesToShareLocation?: boolean;
+	};
+	lastGameState: GameState;
 };
 
-type GameState = {
+type GameState = object & {
 	gameId?: string;
 	gameStartTime?: number;
 	playerLocation?: Coordinates;
@@ -49,9 +51,3 @@ type AddItem = (item: GameObject) => GameResponse;
 type RemoveItem = (itemId: string) => GameResponse;
 type ChangeDisplayName = (displayName: string) => void;
 type VoidAction = () => void;
-
-// export enum OriginatingScreen {
-// 	AUTH = "auth",
-// 	GAME = "game",
-// 	MENU = "menu"
-// }

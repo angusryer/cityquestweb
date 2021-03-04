@@ -1,27 +1,28 @@
 import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
-import { onUserStateChange, getGlobalPreferences } from "./firebaseLogic";
-import { activePlayerAtom, globalPrefsAtom } from "./gameActions";
-import GameManager from "./GameManager";
+import { onUserStateChange, getPlayerData } from "./firebaseLogic";
+import { activePlayerAtom, playerDataAtom } from "./gameActions";
+import ScreenManager from "./ScreenManager";
 import Auth from "./screens/Auth";
 import Splash from "./screens/Splash";
 
 export default function Init() {
 	const [activePlayer, setActivePlayer] = useAtom(activePlayerAtom);
-	const [globalPrefs, setGlobalPrefs] = useAtom(globalPrefsAtom);
-	
+	const [playerData, setPlayerData] = useAtom(playerDataAtom);
+
 	const setActivePlayerRef = useRef(setActivePlayer);
 	useEffect(() => {
 		onUserStateChange(setActivePlayerRef.current);
 	}, []);
 
-	const setGlobalPrefsRef = useRef(setGlobalPrefs);
+	const setPlayerDataRef = useRef(setPlayerData);
 	useEffect(() => {
-		if (activePlayer)
-			getGlobalPreferences(activePlayer.playerId, setGlobalPrefsRef.current);
+		if (activePlayer) {
+			getPlayerData(activePlayer.playerId, setPlayerDataRef.current);
+		}
 	}, [activePlayer]);
 
 	if (!activePlayer) return <Auth />;
-	if (activePlayer && globalPrefs._isLoaded) return <GameManager />;
+	if (activePlayer && playerData) return <ScreenManager />;
 	return <Splash />;
 }

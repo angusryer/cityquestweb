@@ -1,36 +1,37 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Button from "react-bootstrap/Button";
 import { useAtom } from "jotai";
 import {
 	globalSignOutAction,
 	startNewGameAction,
 	loadLastGameAction,
-	originatingScreenAtom
+	activeScreenAtom,
+	toggleConfigMenuAtom,
+	toggleInGameMenuAtom
 } from "../../gameActions";
 import { Screen } from "../../enums";
 
 export default function Menu() {
-	const [originatingScreen, setOriginatingScreen] = useAtom(
-		originatingScreenAtom
-	);
+	const [activeScreen, setActiveScreen] = useAtom(activeScreenAtom);
+	const [, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
+	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
 	const [, startNewGame] = useAtom(startNewGameAction);
 	const [, loadLastGame] = useAtom(loadLastGameAction);
-
-	const setOriginatingScreenRef = useRef(setOriginatingScreen);
-	useEffect(() => {
-		setOriginatingScreenRef.current(Screen.GAME);
-	}, []);
 
 	return (
 		<main className='menu'>
 			<h1 className='menu__title'>City Quest</h1>
 			<div>
-				{originatingScreen === Screen.GAME && (
+				{activeScreen === Screen.MENU && (
 					<Button
 						variant='dark'
 						className='menu__btn'
-						onClick={() => setOriginatingScreenRef.current(Screen.MENU)}
+						onClick={() => {
+							toggleConfigMenu(false);
+							toggleInGameMenu(false);
+							setActiveScreen(Screen.GAME);
+						}}
 					>
 						Back to Gameplay
 					</Button>
