@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import {
-	playerDataAtom,
 	playerEnergyAtom,
 	toggleInGameMenuAtom,
 	toggleConfigMenuAtom,
-	isNewGameAtom,
-	loadGameStateAction
+	isLoadingGameOfTypeAtom,
+	loadSavedGameAction,
+	createNewGameAction
 } from "../../gameActions";
+import { LoadType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
 import EnergyLevel from "../../components/EnergyLevel";
 import Grade from "../../components/Grade";
@@ -16,16 +17,19 @@ import "./Game.scss";
 
 export default function Game() {
 	const [inGameMenu, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
-	const [isNewGame] = useAtom(isNewGameAtom);
-	const [, loadGameState] = useAtom(loadGameStateAction);
+	const [isLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
+	const [, loadSavedGame] = useAtom(loadSavedGameAction);
+	const [, createNewGame] = useAtom(createNewGameAction);
 	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 
 	const [playerEnergy, setPlayerEnergy] = useAtom(playerEnergyAtom);
 
-	const loadGameStateRef = useRef(loadGameState);
+	const loadSavedGameRef = useRef(loadSavedGame);
+	const createNewGameRef = useRef(createNewGame);
 	useEffect(() => {
-		if (!isNewGame) loadGameStateRef.current();
-	}, [isNewGame]);
+		if (isLoadingGameOfType === LoadType.SAVED) loadSavedGameRef.current();
+		if (isLoadingGameOfType === LoadType.NEW) createNewGameRef.current();
+	}, [isLoadingGameOfType]);
 
 	return (
 		<main className='game'>
@@ -55,7 +59,7 @@ export default function Game() {
 				<button
 					type='button'
 					onClick={() =>
-						setPlayerEnergy(playerEnergy === 100 ? 100 : playerEnergy + 1)
+						setPlayerEnergy(playerEnergy === 100 ? 100 : (playerEnergy || 100) + 1)
 					}
 				>
 					Increase Energy
@@ -63,7 +67,7 @@ export default function Game() {
 				<button
 					type='button'
 					onClick={() =>
-						setPlayerEnergy(playerEnergy === 0 ? 0 : playerEnergy - 1)
+						setPlayerEnergy(playerEnergy === 0 ? 0 : (playerEnergy || 100) - 1)
 					}
 				>
 					Decrease Energy

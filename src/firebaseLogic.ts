@@ -1,5 +1,4 @@
 import firebase from "./firebaseConfig";
-import { activePlayerAtom } from "./gameActions";
 
 const db = firebase.firestore();
 
@@ -52,12 +51,11 @@ export const getAndSetPlayerData = async (
 	});
 };
 
-// ! don't replace the name of this function as the above TODO suggests
 export const getPlayerData = async (
-	playerId: string,
+	playerId: string
 ): Promise<PlayerData | null> => {
 	const data = await (await db.collection("users").doc(playerId).get()).data();
-	if (data) return data.playerData;
+	if (data) return data as PlayerData;
 	return null;
 };
 
@@ -65,10 +63,10 @@ export const storeGameInDb = async (
 	gameStateObject: GameState,
 	playerId: string
 ): Promise<void> => {
-	const playerData = await (
-		await db.collection("users").doc(playerId).get()
-	).data();
-	playerData?.update({
-		lastGameState: { ...gameStateObject }
-	});
+	await db
+		.collection("users")
+		.doc(playerId)
+		.update({
+			lastGameState: { ...gameStateObject }
+		});
 };

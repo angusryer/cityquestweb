@@ -7,12 +7,14 @@ import {
 	loadLastGameAction,
 	activeScreenAtom,
 	toggleConfigMenuAtom,
-	toggleInGameMenuAtom
+	toggleInGameMenuAtom,
+	isLoadingGameOfTypeAtom
 } from "../../gameActions";
-import { Screen } from "../../enums";
+import { LoadType, Screen } from "../../enums";
 
 export default function Menu() {
 	const [activeScreen, setActiveScreen] = useAtom(activeScreenAtom);
+	const [, setIsLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
 	const [, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
 	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
@@ -30,6 +32,7 @@ export default function Menu() {
 						onClick={() => {
 							toggleConfigMenu(false);
 							toggleInGameMenu(false);
+							setIsLoadingGameOfType(LoadType.NONE);
 							setActiveScreen(Screen.GAME);
 						}}
 					>

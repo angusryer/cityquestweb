@@ -3,3 +3,9 @@ export enum Screen {
 	GAME,
 	MENU
 }
+
+export enum LoadType {
+	NONE,
+	NEW,
+	SAVED
+}

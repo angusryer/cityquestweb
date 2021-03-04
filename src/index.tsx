@@ -4,11 +4,11 @@ import { Provider } from "jotai";
 import registerServiceWorker from "./serviceWorker";
 import reportWebVitals from "./reportWebVitals";
 import firebase from "./firebaseConfig";
-import Init from "./Init";
 import ErrorBoundary from "./ErrorComponent";
+import Init from "./Init";
+import Splash from "./screens/Splash";
 import "./globalStyles/reset.scss";
 import "./globalStyles/base.scss";
-import Splash from "./screens/Splash";
 
 const analytics: firebase.analytics.Analytics = firebase.analytics();
 
