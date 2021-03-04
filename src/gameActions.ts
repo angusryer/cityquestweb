@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { atom } from "jotai";
 import { v4 as uuid } from "uuid";
 import { getPlayerData, signOut, storeGameInDb } from "./firebaseLogic";
@@ -194,26 +194,26 @@ export const useGameTimer = () => {
 // ? //** SET UP A TIMER HOOK BELOW */
 //** https://css-tricks.com/using-requestanimationframe-with-react-hooks/ */
 
-export const useAnimationFrame = (callback: any) => {
-	// Use useRef for mutable variables that we want to persist
-	// without triggering a re-render on their change
-	const requestRef = useRef<number>(0);
-	const previousTimeRef = useRef<number>(0);
+// export const useAnimationFrame = (callback: any) => {
+// 	// Use useRef for mutable variables that we want to persist
+// 	// without triggering a re-render on their change
+// 	const requestRef = useRef<number>(0);
+// 	const previousTimeRef = useRef<number>(0);
 
-	const animate = (time: number) => {
-		if (previousTimeRef.current !== undefined) {
-			const deltaTime = time - previousTimeRef.current;
-			callback(deltaTime);
-		}
-		previousTimeRef.current = time;
-		requestRef.current = requestAnimationFrame(animate);
-	};
+// 	const animate = (time: number) => {
+// 		if (previousTimeRef.current !== undefined) {
+// 			const deltaTime = time - previousTimeRef.current;
+// 			callback(deltaTime);
+// 		}
+// 		previousTimeRef.current = time;
+// 		requestRef.current = requestAnimationFrame(animate);
+// 	};
 
-	useEffect(() => {
-		requestRef.current = requestAnimationFrame(animate);
-		return () => cancelAnimationFrame(requestRef.current);
-	}, []); // Make sure the effect runs only once
-};
+// 	useEffect(() => {
+// 		requestRef.current = requestAnimationFrame(animate);
+// 		return () => cancelAnimationFrame(requestRef.current);
+// 	}, []); // Make sure the effect runs only once
+// };
 
 //** GET USER LOCATION PERMISSION AND LOCATION  */
 
