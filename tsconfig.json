@@ -19,5 +19,5 @@
 		"noEmit": true,
 		"jsx": "react-jsx"
 	},
-	"include": ["src", "serviceWorker.ts"]
+	"include": ["src", "src/serviceWorker.ts"]
 }
