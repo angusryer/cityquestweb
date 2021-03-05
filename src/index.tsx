@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "jotai";
-import registerServiceWorker from "./service-worker";
+import registerServiceWorker from "./serviceWorker";
 import reportWebVitals from "./reportWebVitals";
 import firebase from "./firebaseConfig";
 import ErrorBoundary from "./ErrorComponent";
@@ -25,7 +25,7 @@ ReactDOM.render(
 	document.getElementById("root")
 );
 
-if (process.env.NODE_ENV === 'production') {
+if (window !== undefined) {
 	registerServiceWorker();
-	reportWebVitals(analytics.logEvent); // Pass in Google Analytics endpoint here (https://bit.ly/CRA-vitals)
 }
+reportWebVitals(analytics.logEvent); // Pass in Google Analytics endpoint here (https://bit.ly/CRA-vitals)
