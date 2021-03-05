@@ -1,6 +1,5 @@
 {
   "projects": {
-    "default": "city-quest",
-    "cqstaging": "city-quest-native"
+    "default": "city-quest-native"
   }
 }

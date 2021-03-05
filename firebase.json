@@ -5,7 +5,7 @@
 	},
 	"hosting": {
 		"site": "city-quest",
-		"public": "public",
+		"public": "build",
 		"ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
 		"rewrites": [
 			{
