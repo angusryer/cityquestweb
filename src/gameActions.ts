@@ -29,6 +29,8 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 	const playerData = get(playerDataAtom);
 	const getAndLoadSavedGame = async () => {
 		if (playerData) {
+			// TODO get from cache or server depending if online and/or which is newer
+			// TODO trigger a cache-to-server sync
 			const data = await getPlayerData(playerData.playerData.playerId);
 			if (data) {
 				const { lastGameState } = data;
@@ -66,9 +68,10 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 		playerItems: get(playerItemsAtom)
 	};
 	if (activePlayer) {
+		// TODO send to cache or server depending if online
+		// TODO trigger a cache-to-server sync
 		storeGameInDb(snapshot, activePlayer.playerId);
 	}
-	set(saveGameStateAction, snapshot);
 });
 
 export const playerAgreesToShareLocation = atom(
