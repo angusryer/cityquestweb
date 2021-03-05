@@ -27,7 +27,7 @@ export const playerItemsAtom = atom<Array<GameObject> | undefined>([
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
 export const loadSavedGameAction = atom(null, async (get, set) => {
 	const playerData = get(playerDataAtom);
-	const getAndLoadSavedGame = async () => {
+	// const getAndLoadSavedGame = async () => {
 		if (playerData) {
 			// TODO get from cache or server depending if online and/or which is newer
 			// TODO trigger a cache-to-server sync
@@ -42,8 +42,8 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 				set(playerItemsAtom, lastGameState.playerItems);
 			}
 		}
-	};
-	getAndLoadSavedGame();
+	// };
+	// getAndLoadSavedGame();
 });
 
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
