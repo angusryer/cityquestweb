@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "jotai";
-import registerServiceWorker from "./serviceWorker";
+import registerServiceWorker from "./service-worker";
 import reportWebVitals from "./reportWebVitals";
 import firebase from "./firebaseConfig";
 import ErrorBoundary from "./ErrorComponent";
