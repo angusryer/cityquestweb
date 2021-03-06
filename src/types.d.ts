@@ -31,6 +31,7 @@ type PlayerData = {
 type GameState = object & {
 	gameId?: string;
 	gameStartTime?: number;
+	gameLastStartTime?: number;
 	playerLocation?: Coordinates;
 	playerEnergy?: number;
 	playerScore?: number;

@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { useEffect, ReactElement } from "react";
 import { useAtom } from "jotai";
 import Game from "./screens/Game";
 import Menu from "./screens/Menu";
@@ -14,9 +14,12 @@ export default function ScreenManager(): ReactElement {
 	const [activeScreen] = useAtom(activeScreenAtom);
 	const [, setIsLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
 
+	useEffect(() => {
+		if (user?.playerData.skipMenu) setIsLoadingGameOfType(LoadType.SAVED);
+	})
+
 	if (activeScreen === Screen.AUTH)
 		if (user?.playerData.skipMenu) {
-			setIsLoadingGameOfType(LoadType.SAVED);
 			return <Game />;
 		} else return <Menu />;
 	if (activeScreen === Screen.GAME) return <Game />;

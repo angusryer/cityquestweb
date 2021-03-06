@@ -21,3 +21,13 @@ export function flatten<T extends Record<string, any>>(
 			: { ...acc, [newPath]: value };
 	}, {} as T);
 }
+
+export function getTimeDiffInSeconds(lastStartTime: number): number {
+	let timeDiff: number;
+	if (Date.now() >= lastStartTime) {
+		timeDiff = Date.now() - lastStartTime;
+	} else {
+		timeDiff = 0;
+	}
+	return timeDiff;
+}

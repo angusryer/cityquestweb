@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import {
 	playerEnergyAtom,
@@ -6,7 +6,8 @@ import {
 	toggleConfigMenuAtom,
 	isLoadingGameOfTypeAtom,
 	loadSavedGameAction,
-	createNewGameAction
+	createNewGameAction,
+	gameLastStartTimeAtom
 } from "../../gameActions";
 import { LoadType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
@@ -21,6 +22,7 @@ export default function Game() {
 	const [, loadSavedGame] = useAtom(loadSavedGameAction);
 	const [, createNewGame] = useAtom(createNewGameAction);
 	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
+	const [, setGameLastStartTime] = useAtom(gameLastStartTimeAtom);
 
 	const [playerEnergy, setPlayerEnergy] = useAtom(playerEnergyAtom);
 
@@ -30,6 +32,16 @@ export default function Game() {
 		if (isLoadingGameOfType === LoadType.SAVED) loadSavedGameRef.current();
 		if (isLoadingGameOfType === LoadType.NEW) createNewGameRef.current();
 	}, [isLoadingGameOfType]);
+
+	// TODO need this to run whenever <Game /> is active, not just when it is mounted initially...
+	// TODO but then again, it appears to work??? 
+	useEffect(() => {
+		console.log(Date.now())
+		setGameLastStartTime(Date.now());
+	}, [setGameLastStartTime]);
+
+	// TODO set up a setInterval and a corresponding cleanup that checks every few seconds and 
+	// TODO sets player energy as well as warns as time gets close to 0 
 
 	return (
 		<main className='game'>
@@ -59,7 +71,9 @@ export default function Game() {
 				<button
 					type='button'
 					onClick={() =>
-						setPlayerEnergy(playerEnergy === 100 ? 100 : (playerEnergy || 100) + 1)
+						setPlayerEnergy(
+							playerEnergy === 100 ? 100 : (playerEnergy || 100) + 1
+						)
 					}
 				>
 					Increase Energy

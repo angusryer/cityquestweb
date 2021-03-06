@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { atom } from "jotai";
 import { v4 as uuid } from "uuid";
 import { getPlayerData, signOut, storeGameInDb } from "./firebaseLogic";
+import { getTimeDiffInSeconds } from "./helpers";
 import { LoadType, Screen } from "./enums";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
@@ -15,8 +16,9 @@ export const toggleInGameMenuAtom = atom<boolean>(false);
 
 //** In-game state atoms--add these to all the save and load actions below */
 export const gameIdAtom = atom<string | undefined>("");
-export const gameStartTimeAtom = atom<number | undefined>(0);
-export const gameTimerAtom = atom<number | undefined>(0);
+export const gameStartTimeAtom = atom<number>(0);
+export const gameElapsedTimeAtom = atom<number>(0);
+export const gameLastStartTimeAtom = atom<number>(0);
 export const playerEnergyAtom = atom<number | undefined>(100);
 export const playerScoreAtom = atom<number | undefined>(100);
 export const playerLocationAtom = atom<Coordinates | undefined>([0, 0]);
@@ -27,29 +29,28 @@ export const playerItemsAtom = atom<Array<GameObject> | undefined>([
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
 export const loadSavedGameAction = atom(null, async (get, set) => {
 	const playerData = get(playerDataAtom);
-	// const getAndLoadSavedGame = async () => {
-		if (playerData) {
-			// TODO get from cache or server depending if online and/or which is newer
-			// TODO trigger a cache-to-server sync
-			const data = await getPlayerData(playerData.playerData.playerId);
-			if (data) {
-				const { lastGameState } = data;
-				set(gameIdAtom, lastGameState.gameId);
-				set(gameStartTimeAtom, lastGameState.gameStartTime);
-				set(playerLocationAtom, lastGameState.playerLocation);
-				set(playerEnergyAtom, lastGameState.playerEnergy);
-				set(playerScoreAtom, lastGameState.playerScore);
-				set(playerItemsAtom, lastGameState.playerItems);
-			}
+	if (playerData) {
+		// TODO get from cache or server depending if online and/or which is newer
+		// TODO trigger a cache-to-server sync
+		const data = await getPlayerData(playerData.playerData.playerId);
+		if (data) {
+			const { lastGameState } = data;
+			set(gameIdAtom, lastGameState.gameId);
+			set(gameStartTimeAtom, lastGameState.gameStartTime || 0);
+			set(gameLastStartTimeAtom, lastGameState.gameLastStartTime || 0);
+			set(playerLocationAtom, lastGameState.playerLocation);
+			set(playerEnergyAtom, lastGameState.playerEnergy);
+			set(playerScoreAtom, lastGameState.playerScore);
+			set(playerItemsAtom, lastGameState.playerItems);
 		}
-	// };
-	// getAndLoadSavedGame();
+	}
 });
 
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
 export const createNewGameAction = atom(null, (_get, set) => {
 	set(gameIdAtom, uuid());
 	set(gameStartTimeAtom, Date.now());
+	set(gameLastStartTimeAtom, Date.now());
 	set(playerLocationAtom, [0, 0]);
 	set(playerEnergyAtom, 100);
 	set(playerScoreAtom, 100);
@@ -62,6 +63,7 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 	const snapshot: GameState = {
 		gameId: get(gameIdAtom),
 		gameStartTime: get(gameStartTimeAtom),
+		gameLastStartTime: get(gameLastStartTimeAtom),
 		playerLocation: get(playerLocationAtom),
 		playerEnergy: get(playerEnergyAtom),
 		playerScore: get(playerScoreAtom),
@@ -73,6 +75,16 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 		storeGameInDb(snapshot, activePlayer.playerId);
 	}
 });
+
+export const gameElapsedTimeAction = atom(
+	(get) => get(gameElapsedTimeAtom),
+	(get, set) => {
+		const elapsedTime: number = get(gameElapsedTimeAtom);
+		const lastStartTime: number = get(gameLastStartTimeAtom);
+		const nextTimeDiff = getTimeDiffInSeconds(lastStartTime);
+		set(gameElapsedTimeAtom, elapsedTime + nextTimeDiff);
+	}
+);
 
 export const playerAgreesToShareLocation = atom(
 	false as boolean,
