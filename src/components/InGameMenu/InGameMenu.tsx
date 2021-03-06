@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
 import { Screen } from "../../enums";
@@ -8,8 +7,7 @@ import {
 	toggleConfigMenuAtom,
 	saveGameStateAction,
 	activeScreenAtom,
-	gameElapsedTimeAction,
-	gameLastStartTimeAtom
+	gameElapsedTimeAction
 } from "../../gameActions";
 import ConfigMenu from "../ConfigMenu";
 import "./InGameMenu.scss";
@@ -20,16 +18,7 @@ const InGameMenu: React.FC = () => {
 	const [, saveGameState] = useAtom(saveGameStateAction);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
-	const [, setGameLastTime] = useAtom(gameLastStartTimeAtom);
-	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAction);
-
-	const setGameElapsedTimeRef = useRef(setGameElapsedTime);
-	useEffect(() => {
-		setGameElapsedTimeRef.current();
-		return () => {
-			setGameLastTime(Date.now());
-		};
-	}, [setGameLastTime]);
+	const [gameElapsedTime] = useAtom(gameElapsedTimeAction);
 
 	return (
 		<div className='ingamemenu'>
@@ -38,7 +27,7 @@ const InGameMenu: React.FC = () => {
 				Current Player: {activePlayer?.playerDisplayName}
 			</p>
 			<p className='ingamemenu__heading'>
-				Elapsed Time: {`${Math.round(gameElapsedTime / 1000 )} seconds`}
+				Elapsed Time: {`${Math.round(gameElapsedTime / 1000)} seconds`}
 			</p>
 			<Button
 				variant='dark'

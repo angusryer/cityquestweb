@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { atom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { v4 as uuid } from "uuid";
 import { getPlayerData, signOut, storeGameInDb } from "./firebaseLogic";
 import { getTimeDiffInSeconds } from "./helpers";
@@ -13,6 +13,8 @@ export const activeScreenAtom = atom<number>(Screen.AUTH);
 export const isLoadingGameOfTypeAtom = atom<number>(LoadType.NEW);
 export const toggleConfigMenuAtom = atom<boolean>(false);
 export const toggleInGameMenuAtom = atom<boolean>(false);
+export const timerIdAtom = atom<any>(1); // fix this should be typed as the window.setInterval ReturnType
+export const timerToggleAtom = atom<boolean>(false);
 
 //** In-game state atoms--add these to all the save and load actions below */
 export const gameIdAtom = atom<string | undefined>("");
@@ -85,6 +87,25 @@ export const gameElapsedTimeAction = atom(
 		set(gameElapsedTimeAtom, elapsedTime + nextTimeDiff);
 	}
 );
+
+export const gameTimerToggleAction = atom(null, (get, set) => {
+	const timerId = get(timerIdAtom);
+	const timerIsActive = get(timerToggleAtom);
+	const elapsedTime: number = get(gameElapsedTimeAtom);
+	const lastStartTime: number = get(gameLastStartTimeAtom);
+	const nextTimeDiff = getTimeDiffInSeconds(lastStartTime);
+	if (!timerIsActive) {
+		set(
+			timerIdAtom,
+			setInterval(() => {
+				// ! Need to somehow trigger gameElapsedTimeAction
+				set(gameElapsedTimeAtom, elapsedTime + nextTimeDiff);
+			}, 1000)
+		);
+	} else {
+		clearInterval(get(timerId));
+	}
+});
 
 export const playerAgreesToShareLocation = atom(
 	false as boolean,
