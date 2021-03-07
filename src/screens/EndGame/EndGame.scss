@@ -1,0 +1,5 @@
+@import '../../globalStyles/mixins';
+
+.endgame {
+    @include modal_background();
+}

@@ -7,8 +7,9 @@ import {
 	toggleConfigMenuAtom,
 	saveGameStateAction,
 	activeScreenAtom,
-	gameElapsedTimeAction
+	gameElapsedTimeAtom
 } from "../../gameActions";
+import { getElapsedTimeString } from "../../helpers";
 import ConfigMenu from "../ConfigMenu";
 import "./InGameMenu.scss";
 
@@ -18,7 +19,7 @@ const InGameMenu: React.FC = () => {
 	const [, saveGameState] = useAtom(saveGameStateAction);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
-	const [gameElapsedTime] = useAtom(gameElapsedTimeAction);
+	const [gameElapsedTime] = useAtom(gameElapsedTimeAtom);
 
 	return (
 		<div className='ingamemenu'>
@@ -27,7 +28,7 @@ const InGameMenu: React.FC = () => {
 				Current Player: {activePlayer?.playerDisplayName}
 			</p>
 			<p className='ingamemenu__heading'>
-				Elapsed Time: {`${Math.round(gameElapsedTime / 1000)} seconds`}
+				Elapsed Time: {getElapsedTimeString(gameElapsedTime)}
 			</p>
 			<Button
 				variant='dark'

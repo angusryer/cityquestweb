@@ -9,3 +9,10 @@ export enum LoadType {
 	NEW,
 	SAVED
 }
+
+export enum EventType {
+	NONE,
+	NO_ENERGY,
+	CLUE_FOUND,
+	IN_BLAST
+}

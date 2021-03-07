@@ -15,11 +15,11 @@ export default function ScreenManager(): ReactElement {
 	const [, setIsLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
 
 	useEffect(() => {
-		if (user?.playerData.skipMenu) setIsLoadingGameOfType(LoadType.SAVED);
+		if (user?.playerData?.skipMenu) setIsLoadingGameOfType(LoadType.SAVED);
 	})
 
 	if (activeScreen === Screen.AUTH)
-		if (user?.playerData.skipMenu) {
+		if (user?.playerData?.skipMenu) {
 			return <Game />;
 		} else return <Menu />;
 	if (activeScreen === Screen.GAME) return <Game />;

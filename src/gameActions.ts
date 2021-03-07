@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react";
-import { atom, useAtom } from "jotai";
+import { atom } from "jotai";
 import { v4 as uuid } from "uuid";
 import { getPlayerData, signOut, storeGameInDb } from "./firebaseLogic";
-import { getTimeDiffInSeconds } from "./helpers";
-import { LoadType, Screen } from "./enums";
+import { LoadType, Screen, EventType } from "./enums";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
-// export const playerLocation = atom<Coordinates>((get) => return getPlayerLocation())
 export const activePlayerAtom = atom<ActivePlayer | null>(null);
 export const playerDataAtom = atom<PlayerData | null>(null);
 export const activeScreenAtom = atom<number>(Screen.AUTH);
 export const isLoadingGameOfTypeAtom = atom<number>(LoadType.NEW);
+export const eventTriggeredOfTypeAtom = atom<number>(EventType.NONE);
 export const toggleConfigMenuAtom = atom<boolean>(false);
 export const toggleInGameMenuAtom = atom<boolean>(false);
-export const timerIdAtom = atom<any>(1); // fix this should be typed as the window.setInterval ReturnType
-export const timerToggleAtom = atom<boolean>(false);
+export const timerActiveToggleAtom = atom<boolean>(false);
+
+//** Screen routing states */
+export const endGameAtom = atom<boolean>(false);
+export const itemMenuAtom = atom<boolean>(false);
+export const itemMenuMediaAtom = atom<boolean>(false);
+export const winGameAtom = atom<boolean>(false);
+export const fullScreenMediaAtom = atom<boolean>(false);
 
 //** In-game state atoms--add these to all the save and load actions below */
 export const gameIdAtom = atom<string | undefined>("");
@@ -40,6 +45,7 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 			set(gameIdAtom, lastGameState.gameId);
 			set(gameStartTimeAtom, lastGameState.gameStartTime || 0);
 			set(gameLastStartTimeAtom, lastGameState.gameLastStartTime || 0);
+			set(gameElapsedTimeAtom, lastGameState.gameElapsedTime || 0);
 			set(playerLocationAtom, lastGameState.playerLocation);
 			set(playerEnergyAtom, lastGameState.playerEnergy);
 			set(playerScoreAtom, lastGameState.playerScore);
@@ -66,6 +72,7 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 		gameId: get(gameIdAtom),
 		gameStartTime: get(gameStartTimeAtom),
 		gameLastStartTime: get(gameLastStartTimeAtom),
+		gameElapsedTime: get(gameElapsedTimeAtom),
 		playerLocation: get(playerLocationAtom),
 		playerEnergy: get(playerEnergyAtom),
 		playerScore: get(playerScoreAtom),
@@ -75,35 +82,6 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 		// TODO send to cache or server depending if online
 		// TODO trigger a cache-to-server sync
 		storeGameInDb(snapshot, activePlayer.playerId);
-	}
-});
-
-export const gameElapsedTimeAction = atom(
-	(get) => get(gameElapsedTimeAtom),
-	(get, set) => {
-		const elapsedTime: number = get(gameElapsedTimeAtom);
-		const lastStartTime: number = get(gameLastStartTimeAtom);
-		const nextTimeDiff = getTimeDiffInSeconds(lastStartTime);
-		set(gameElapsedTimeAtom, elapsedTime + nextTimeDiff);
-	}
-);
-
-export const gameTimerToggleAction = atom(null, (get, set) => {
-	const timerId = get(timerIdAtom);
-	const timerIsActive = get(timerToggleAtom);
-	const elapsedTime: number = get(gameElapsedTimeAtom);
-	const lastStartTime: number = get(gameLastStartTimeAtom);
-	const nextTimeDiff = getTimeDiffInSeconds(lastStartTime);
-	if (!timerIsActive) {
-		set(
-			timerIdAtom,
-			setInterval(() => {
-				// ! Need to somehow trigger gameElapsedTimeAction
-				set(gameElapsedTimeAtom, elapsedTime + nextTimeDiff);
-			}, 1000)
-		);
-	} else {
-		clearInterval(get(timerId));
 	}
 });
 
@@ -126,15 +104,25 @@ export const globalSignOutAction = atom(null, (_get, set) => {
 
 export const startNewGameAction = atom(null, (_get, set) => {
 	set(isLoadingGameOfTypeAtom, LoadType.NEW);
-	set(toggleConfigMenuAtom, false);
-	set(toggleInGameMenuAtom, false);
-	set(activeScreenAtom, Screen.GAME);
+	set(resetDefaultGameState, null);
 });
 
 export const loadLastGameAction = atom(null, (_get, set) => {
 	set(isLoadingGameOfTypeAtom, LoadType.SAVED);
+	set(resetDefaultGameState, null);
+});
+
+//** Must keep these updated as Screen Routing Atoms are added */
+const resetDefaultGameState = atom(null, (_get, set) => {
+	set(eventTriggeredOfTypeAtom, EventType.NONE);
+	set(itemMenuAtom, false);
+	set(itemMenuMediaAtom, false);
+	set(winGameAtom, false);
+	set(fullScreenMediaAtom, false);
 	set(toggleConfigMenuAtom, false);
 	set(toggleInGameMenuAtom, false);
+	set(endGameAtom, false);
+	set(gameElapsedTimeAtom, 0);
 	set(activeScreenAtom, Screen.GAME);
 });
 
@@ -226,41 +214,6 @@ export const useGameTimer = () => {
 
 	return [time, toggleTimer, resetTimer] as const;
 };
-
-// ? //** SET UP A TIMER HOOK BELOW */
-//** https://css-tricks.com/using-requestanimationframe-with-react-hooks/ */
-
-// export const useAnimationFrame = (callback: any) => {
-// 	// Use useRef for mutable variables that we want to persist
-// 	// without triggering a re-render on their change
-// 	const requestRef = useRef<number>(0);
-// 	const previousTimeRef = useRef<number>(0);
-
-// 	const animate = (time: number) => {
-// 		if (previousTimeRef.current !== undefined) {
-// 			const deltaTime = time - previousTimeRef.current;
-// 			callback(deltaTime);
-// 		}
-// 		previousTimeRef.current = time;
-// 		requestRef.current = requestAnimationFrame(animate);
-// 	};
-
-// 	useEffect(() => {
-// 		requestRef.current = requestAnimationFrame(animate);
-// 		return () => cancelAnimationFrame(requestRef.current);
-// 	}, []); // Make sure the effect runs only once
-// };
-
-//** GET USER LOCATION PERMISSION AND LOCATION  */
-
-// export const userAgreesToShareLocation = (gameConfig: GameConfig): boolean => {
-// 	if (gameConfig?.playerData?.userAgreesToShareLocation !== undefined) {
-// 		return gameConfig.playerData.userAgreesToShareLocation;
-// 	} else {
-// 		// TODO get the user's permission to access their location
-// 		return true;
-// 	}
-// };
 
 //** KEEP SYNC WITH CACHE USING REACT-QUERY */
 

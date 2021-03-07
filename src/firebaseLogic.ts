@@ -1,4 +1,5 @@
 import firebase from "./firebaseConfig";
+import { playerDataAtom } from "./gameActions";
 
 const db = firebase.firestore();
 
@@ -30,7 +31,31 @@ export async function getCurrentUser(): Promise<ActivePlayer | null> {
 
 export const signInWithPopup = async (): Promise<void> => {
 	const authProvider = new firebase.auth.GoogleAuthProvider();
-	await firebase.auth().signInWithPopup(authProvider);
+	const user = await firebase.auth().signInWithPopup(authProvider);
+	if (user) {
+		const userFound = await db.collection("users").doc(user.user?.uid).get();
+		if (!userFound.exists) {
+			await db
+				.collection("users")
+				.doc(user.user?.uid)
+				.set({
+					playerData: {
+						playerDisplayName: user.user?.displayName,
+						playerId: user.user?.uid
+					},
+					lastGameState: {}
+				});
+		} else {
+			await db
+				.collection("users")
+				.doc(user.user?.uid)
+				.update({
+					playerData: {
+						playerDisplayName: user.user?.displayName
+					}
+				});
+		}
+	}
 };
 
 export const signOut = async (): Promise<void> => {
