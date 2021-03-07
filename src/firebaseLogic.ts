@@ -1,5 +1,4 @@
 import firebase from "./firebaseConfig";
-import { playerDataAtom } from "./gameActions";
 
 const db = firebase.firestore();
 
