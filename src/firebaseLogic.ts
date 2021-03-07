@@ -1,4 +1,5 @@
 import { firebase, auth, db } from "./firebaseConfig";
+import { playerDataAtom } from "./gameActions";
 
 //** Firebase Auth Operations */
 
@@ -37,8 +38,9 @@ export const signInWithPopup = async (): Promise<void> => {
 				.doc(user.user?.uid)
 				.set({
 					playerData: {
+						playerId: user.user?.uid,
 						playerDisplayName: user.user?.displayName,
-						playerId: user.user?.uid
+						playerEmail: user.user?.email
 					},
 					lastGameState: {}
 				});
@@ -48,7 +50,9 @@ export const signInWithPopup = async (): Promise<void> => {
 				.doc(user.user?.uid)
 				.update({
 					playerData: {
-						playerDisplayName: user.user?.displayName
+						playerId: user.user?.uid,
+						playerDisplayName: user.user?.displayName,
+						playerEmail: user.user?.email
 					}
 				});
 		}
@@ -61,7 +65,24 @@ export const signOut = async (): Promise<void> => {
 
 //** Firebase Firestore Operations */
 
-// TODO replace all instances of getPlayerData in codebase with getAndSetPlayerData
+export const onPlayerDataChange = async (
+	playerId: string,
+	setPlayerData: Hookback<PlayerData>
+): Promise<void> => {
+	db.collection("users")
+		.doc(playerId)
+		.onSnapshot({
+			next: (updatedDoc) => {
+				const data = updatedDoc.data();
+				setPlayerData({
+					playerData: data?.playerData,
+					lastGameState: data?.lastGameState
+				});
+			},
+			error: (err) => console.error(err)
+		});
+};
+
 export const getAndSetPlayerData = async (
 	playerId: string,
 	setPlayerData: Hookback<PlayerData>

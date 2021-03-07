@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
-import { onUserStateChange, getAndSetPlayerData } from "./firebaseLogic";
+import { onUserStateChange, onPlayerDataChange } from "./firebaseLogic";
 import { activePlayerAtom, playerDataAtom } from "./gameActions";
 import ScreenManager from "./ScreenManager";
 import Auth from "./screens/Auth";
@@ -18,7 +18,7 @@ export default function Init() {
 	const setPlayerDataRef = useRef(setPlayerData);
 	useEffect(() => {
 		if (activePlayer) {
-			getAndSetPlayerData(activePlayer.playerId, setPlayerDataRef.current);
+			onPlayerDataChange(activePlayer.playerId, setPlayerDataRef.current);
 		}
 	}, [activePlayer]);
 

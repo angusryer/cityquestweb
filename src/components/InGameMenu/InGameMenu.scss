@@ -3,6 +3,12 @@
 .ingamemenu {
 	@include modal_background;
 
+	&__message {
+		position: absolute;
+		top: 50px;
+		margin: 0 auto;
+	}
+
 	&__heading {
 		font-style: italic;
 	}

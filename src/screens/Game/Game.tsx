@@ -27,8 +27,8 @@ export default function Game() {
 		eventTriggeredOfTypeAtom
 	);
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
-	const [, setPlayerEnergy] = useAtom(playerEnergyAtom);
 	const [endGame, setEndGame] = useAtom(endGameAtom);
+	const [, setPlayerEnergy] = useAtom(playerEnergyAtom);
 	const [, loadSavedGame] = useAtom(loadSavedGameAction);
 	const [, createNewGame] = useAtom(createNewGameAction);
 	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);

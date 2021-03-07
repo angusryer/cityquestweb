@@ -8,12 +8,14 @@ import {
 	activeScreenAtom,
 	toggleConfigMenuAtom,
 	toggleInGameMenuAtom,
-	isLoadingGameOfTypeAtom
+	isLoadingGameOfTypeAtom,
+	playerDataAtom
 } from "../../gameActions";
 import { LoadType, Screen } from "../../enums";
 
 export default function Menu() {
 	const [activeScreen, setActiveScreen] = useAtom(activeScreenAtom);
+	const [playerData] = useAtom(playerDataAtom);
 	const [, setIsLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
 	const [, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
 	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
@@ -46,13 +48,15 @@ export default function Menu() {
 				>
 					New Game
 				</Button>
-				<Button
-					variant='dark'
-					className='menu__btn'
-					onClick={() => loadLastGame()}
-				>
-					Load Last Game
-				</Button>
+				{Object.keys(playerData?.lastGameState || {}).length > 0 && (
+					<Button
+						variant='dark'
+						className='menu__btn'
+						onClick={() => loadLastGame()}
+					>
+						Load Last Game
+					</Button>
+				)}
 				<Button
 					variant='dark'
 					className='menu__btn'

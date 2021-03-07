@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
 import { Screen } from "../../enums";
@@ -14,22 +15,34 @@ import ConfigMenu from "../ConfigMenu";
 import "./InGameMenu.scss";
 
 const InGameMenu: React.FC = () => {
+	const [message, setMessage] = useState<string>("");
 	const [configMenu, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [activePlayer] = useAtom(activePlayerAtom);
+	const [gameElapsedTime] = useAtom(gameElapsedTimeAtom);
 	const [, saveGameState] = useAtom(saveGameStateAction);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
-	const [gameElapsedTime] = useAtom(gameElapsedTimeAtom);
+
+	const timerId = useRef<number>(0);
+	useEffect(() => {
+		timerId.current = window.setTimeout(() => {
+			setMessage("");
+		}, 2000);
+		return () => {
+			clearTimeout(timerId.current);
+		};
+	}, [message]);
 
 	return (
 		<div className='ingamemenu'>
 			{configMenu && <ConfigMenu />}
-			<p className='ingamemenu__heading'>
+			<span className="ingamemenu__message">{message}</span>
+			<span className='ingamemenu__heading'>
 				Current Player: {activePlayer?.playerDisplayName}
-			</p>
-			<p className='ingamemenu__heading'>
+			</span>
+			<span className='ingamemenu__heading'>
 				Elapsed Time: {getElapsedTimeString(gameElapsedTime)}
-			</p>
+			</span>
 			<Button
 				variant='dark'
 				onClick={() => signOutHandler()}
@@ -48,7 +61,10 @@ const InGameMenu: React.FC = () => {
 			</Button>
 			<Button
 				variant='dark'
-				onClick={() => saveGameState()}
+				onClick={() => {
+					saveGameState();
+					setMessage("Game saved!");
+				}}
 				className='ingamemenu__btn'
 			>
 				Save Game

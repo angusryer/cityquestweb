@@ -39,9 +39,10 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 	if (playerData) {
 		// TODO get from cache or server depending if online and/or which is newer
 		// TODO trigger a cache-to-server sync
-		const data = await getPlayerData(playerData.playerData.playerId);
-		if (data) {
-			const { lastGameState } = data;
+		// const data = await getPlayerData(playerData.playerData.playerId);
+		// if (data && Object.keys(data?.lastGameState).length > 0) {
+		if (playerData && Object.keys(playerData?.lastGameState).length > 0) {
+			const { lastGameState } = playerData; // was 'data' before
 			set(gameIdAtom, lastGameState.gameId);
 			set(gameStartTimeAtom, lastGameState.gameStartTime || 0);
 			set(gameLastStartTimeAtom, lastGameState.gameLastStartTime || 0);
@@ -50,6 +51,8 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 			set(playerEnergyAtom, lastGameState.playerEnergy);
 			set(playerScoreAtom, lastGameState.playerScore);
 			set(playerItemsAtom, lastGameState.playerItems);
+		} else {
+			set(createNewGameAction, null);
 		}
 	}
 });
@@ -59,6 +62,7 @@ export const createNewGameAction = atom(null, (_get, set) => {
 	set(gameIdAtom, uuid());
 	set(gameStartTimeAtom, Date.now());
 	set(gameLastStartTimeAtom, Date.now());
+	set(gameElapsedTimeAtom, 0);
 	set(playerLocationAtom, [0, 0]);
 	set(playerEnergyAtom, 100);
 	set(playerScoreAtom, 100);
@@ -87,7 +91,7 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 
 export const playerAgreesToShareLocation = atom(
 	false as boolean,
-	(get, set) => {
+	(_get, set) => {
 		// ask if user will share location
 		set(playerAgreesToShareLocation, true);
 	}
@@ -103,18 +107,17 @@ export const globalSignOutAction = atom(null, (_get, set) => {
 });
 
 export const startNewGameAction = atom(null, (_get, set) => {
-	set(isLoadingGameOfTypeAtom, LoadType.NEW);
 	set(resetDefaultGameState, null);
+	set(isLoadingGameOfTypeAtom, LoadType.NEW);
 });
 
 export const loadLastGameAction = atom(null, (_get, set) => {
-	set(isLoadingGameOfTypeAtom, LoadType.SAVED);
 	set(resetDefaultGameState, null);
+	set(isLoadingGameOfTypeAtom, LoadType.SAVED);
 });
 
 //** Must keep these updated as Screen Routing Atoms are added */
 const resetDefaultGameState = atom(null, (_get, set) => {
-	set(eventTriggeredOfTypeAtom, EventType.NONE);
 	set(itemMenuAtom, false);
 	set(itemMenuMediaAtom, false);
 	set(winGameAtom, false);
@@ -122,7 +125,7 @@ const resetDefaultGameState = atom(null, (_get, set) => {
 	set(toggleConfigMenuAtom, false);
 	set(toggleInGameMenuAtom, false);
 	set(endGameAtom, false);
-	set(gameElapsedTimeAtom, 0);
+	set(eventTriggeredOfTypeAtom, EventType.NONE);
 	set(activeScreenAtom, Screen.GAME);
 });
 
