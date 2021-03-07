@@ -1,16 +1,14 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "jotai";
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
-import firebase from "./firebaseConfig";
+import { analytics } from "./firebaseConfig";
 import ErrorBoundary from "./ErrorComponent";
 import Init from "./Init";
 import Splash from "./screens/Splash";
 import "./globalStyles/reset.scss";
 import "./globalStyles/base.scss";
-
-const analytics: firebase.analytics.Analytics = firebase.analytics();
 
 ReactDOM.render(
 	<React.StrictMode>

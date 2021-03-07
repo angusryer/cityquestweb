@@ -1,6 +1,4 @@
-import firebase from "./firebaseConfig";
-
-const db = firebase.firestore();
+import { firebase, auth, db } from "./firebaseConfig";
 
 //** Firebase Auth Operations */
 
@@ -15,7 +13,7 @@ const formatUserObject = (user: firebase.User): ActivePlayer => {
 export async function onUserStateChange(
 	setCallback: Hookback<ActivePlayer | null>
 ): Promise<ActivePlayer | void> {
-	firebase.auth().onAuthStateChanged((user: firebase.User | null) => {
+	auth.onAuthStateChanged((user: firebase.User | null) => {
 		if (user !== null) {
 			setCallback(formatUserObject(user));
 		} else setCallback(null);
@@ -23,14 +21,14 @@ export async function onUserStateChange(
 }
 
 export async function getCurrentUser(): Promise<ActivePlayer | null> {
-	const user: firebase.User | null = await firebase.auth().currentUser;
+	const user: firebase.User | null = await auth.currentUser;
 	if (user !== null) return formatUserObject(user);
 	return null;
 }
 
 export const signInWithPopup = async (): Promise<void> => {
 	const authProvider = new firebase.auth.GoogleAuthProvider();
-	const user = await firebase.auth().signInWithPopup(authProvider);
+	const user = await auth.signInWithPopup(authProvider);
 	if (user) {
 		const userFound = await db.collection("users").doc(user.user?.uid).get();
 		if (!userFound.exists) {
@@ -58,7 +56,7 @@ export const signInWithPopup = async (): Promise<void> => {
 };
 
 export const signOut = async (): Promise<void> => {
-	await firebase.auth().signOut();
+	await auth.signOut();
 };
 
 //** Firebase Firestore Operations */
