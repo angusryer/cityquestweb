@@ -8,14 +8,16 @@ import {
 	loadSavedGameAction,
 	createNewGameAction,
 	gameElapsedTimeAtom,
-	eventTriggeredOfTypeAtom,
-	endGameAtom
+	eventTriggeredOfTypeAtom
 } from "../../gameActions";
 import { LoadType, EventType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
 import EnergyLevel from "../../components/EnergyLevel";
 import Grade from "../../components/Grade";
+import LevelUp from "../LevelUp";
+import WinGame from "../WinGame";
 import EndGame from "../EndGame";
+import Intro from "../Intro";
 import SvgIcon from "@material-ui/icons/Settings";
 import { useInterval, getElapsedTimeString } from "../../helpers";
 import "./Game.scss";
@@ -27,7 +29,6 @@ export default function Game() {
 		eventTriggeredOfTypeAtom
 	);
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
-	const [endGame, setEndGame] = useAtom(endGameAtom);
 	const [, setPlayerEnergy] = useAtom(playerEnergyAtom);
 	const [, loadSavedGame] = useAtom(loadSavedGameAction);
 	const [, createNewGame] = useAtom(createNewGameAction);
@@ -40,10 +41,6 @@ export default function Game() {
 		if (isLoadingGameOfType === LoadType.NEW) createNewGameRef.current();
 	}, [isLoadingGameOfType]);
 
-	useEffect(() => {
-		if (eventTriggeredOfType === EventType.NO_ENERGY) setEndGame(true);
-	}, [eventTriggeredOfType, setEndGame]);
-
 	useInterval(
 		() => {
 			setGameElapsedTime(gameElapsedTime + 1);
@@ -51,16 +48,32 @@ export default function Game() {
 		inGameMenu || eventTriggeredOfType === EventType.NO_ENERGY ? null : 1000
 	);
 
+	const toggleMenu = () => {
+		toggleInGameMenu(!inGameMenu);
+		toggleConfigMenu(false);
+	};
+
+	const triggerEnergyLost = () => {
+		setPlayerEnergy(0);
+		setEventTriggeredOfType(EventType.NO_ENERGY);
+	};
+
+	const triggerWinGame = () => {
+		setEventTriggeredOfType(EventType.WIN_GAME);
+	};
+
+	const triggerLevelUp = () => {
+		setEventTriggeredOfType(EventType.LEVEL_UP);
+	};
+
+	if (isLoadingGameOfType === LoadType.NEW) return <Intro />;
+	if (eventTriggeredOfType === EventType.LEVEL_UP) return <LevelUp />;
+	if (eventTriggeredOfType === EventType.WIN_GAME) return <WinGame />;
+	if (eventTriggeredOfType === EventType.END_GAME) return <EndGame />;
+
 	return (
 		<main className='game'>
-			{endGame && <EndGame />}
-			<SvgIcon
-				className='game__modal-icon'
-				onClick={() => {
-					toggleInGameMenu(!inGameMenu);
-					toggleConfigMenu(false);
-				}}
-			/>
+			<SvgIcon className='game__modal-icon' onClick={toggleMenu} />
 			{inGameMenu && <InGameMenu />}
 			<section className='game__hud'>
 				<EnergyLevel />
@@ -70,23 +83,12 @@ export default function Game() {
 			<section className='game__media'></section>
 			<section className='game__info'></section>
 			<section className='game__map'>
-				<button
-					type='button'
-					onClick={() => {
-						setPlayerEnergy(0);
-						setEventTriggeredOfType(EventType.NO_ENERGY);
-					}}
-				>
+				<button type='button' onClick={triggerEnergyLost}>
 					Lose All Energy! (Just for Testing)
 				</button>
-				{/* <button
-					type='button'
-					onClick={() =>
-						setPlayerEnergy(playerEnergy === 0 ? 0 : (playerEnergy || 100) - 1)
-					}
-				>
-					Decrease Energy
-				</button> */}
+				<button type='button' onClick={triggerWinGame}>
+					Go for the win!
+				</button>
 			</section>
 		</main>
 	);

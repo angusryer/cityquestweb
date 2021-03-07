@@ -1,0 +1,5 @@
+@import "../../globalStyles/mixins";
+
+.levelup {
+	@include modal_background();
+}

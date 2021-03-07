@@ -15,5 +15,7 @@ export enum EventType {
 	END_GAME,
 	NO_ENERGY = END_GAME,
 	CLUE_FOUND,
-	IN_BLAST = END_GAME
+	IN_BLAST = END_GAME,
+	LEVEL_UP,
+	WIN_GAME
 }

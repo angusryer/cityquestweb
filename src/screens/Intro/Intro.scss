@@ -1,0 +1,5 @@
+@import '../../globalStyles/mixins';
+
+.intro {
+    @include modal_background();
+}

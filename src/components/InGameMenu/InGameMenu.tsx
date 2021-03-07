@@ -20,9 +20,7 @@ const InGameMenu: React.FC = () => {
 	const [configMenu, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [activePlayer] = useAtom(activePlayerAtom);
 	const [gameElapsedTime] = useAtom(gameElapsedTimeAtom);
-	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(
-		eventTriggeredOfTypeAtom
-	);
+	const [eventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
 	const [, saveGameState] = useAtom(saveGameStateAction);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
@@ -36,6 +34,11 @@ const InGameMenu: React.FC = () => {
 			clearTimeout(timerId.current);
 		};
 	}, [message]);
+
+	const saveGame = () => {
+		saveGameState();
+		setMessage("Game saved!");
+	};
 
 	return (
 		<div className='ingamemenu'>
@@ -64,14 +67,7 @@ const InGameMenu: React.FC = () => {
 				Main Menu
 			</Button>
 			{eventTriggeredOfType !== EventType.END_GAME && (
-				<Button
-					variant='dark'
-					onClick={() => {
-						saveGameState();
-						setMessage("Game saved!");
-					}}
-					className='ingamemenu__btn'
-				>
+				<Button variant='dark' onClick={saveGame} className='ingamemenu__btn'>
 					Save Game
 				</Button>
 			)}
