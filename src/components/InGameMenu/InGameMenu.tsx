@@ -63,7 +63,7 @@ const InGameMenu: React.FC = () => {
 			>
 				Main Menu
 			</Button>
-			{eventTriggeredOfType === EventType.END_GAME && (
+			{eventTriggeredOfType !== EventType.END_GAME && (
 				<Button
 					variant='dark'
 					onClick={() => {
@@ -80,7 +80,7 @@ const InGameMenu: React.FC = () => {
 				onClick={() => toggleConfigMenu(!configMenu)}
 				className='ingamemenu__btn'
 			>
-				Toggle Dev Menu
+				Toggle Debug Menu
 			</Button>
 		</div>
 	);
