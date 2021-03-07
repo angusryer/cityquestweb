@@ -39,8 +39,6 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 	if (playerData) {
 		// TODO get from cache or server depending if online and/or which is newer
 		// TODO trigger a cache-to-server sync
-		// const data = await getPlayerData(playerData.playerData.playerId);
-		// if (data && Object.keys(data?.lastGameState).length > 0) {
 		if (playerData && Object.keys(playerData?.lastGameState).length > 0) {
 			const { lastGameState } = playerData; // was 'data' before
 			set(gameIdAtom, lastGameState.gameId);

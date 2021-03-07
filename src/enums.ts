@@ -12,7 +12,8 @@ export enum LoadType {
 
 export enum EventType {
 	NONE,
-	NO_ENERGY,
+	END_GAME,
+	NO_ENERGY = END_GAME,
 	CLUE_FOUND,
-	IN_BLAST
+	IN_BLAST = END_GAME
 }

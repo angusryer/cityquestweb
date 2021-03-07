@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
-import { Screen } from "../../enums";
+import { EventType, Screen } from "../../enums";
 import {
 	activePlayerAtom,
 	globalSignOutAction,
 	toggleConfigMenuAtom,
 	saveGameStateAction,
 	activeScreenAtom,
-	gameElapsedTimeAtom
+	gameElapsedTimeAtom,
+	eventTriggeredOfTypeAtom
 } from "../../gameActions";
 import { getElapsedTimeString } from "../../helpers";
 import ConfigMenu from "../ConfigMenu";
@@ -19,6 +20,9 @@ const InGameMenu: React.FC = () => {
 	const [configMenu, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [activePlayer] = useAtom(activePlayerAtom);
 	const [gameElapsedTime] = useAtom(gameElapsedTimeAtom);
+	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(
+		eventTriggeredOfTypeAtom
+	);
 	const [, saveGameState] = useAtom(saveGameStateAction);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 	const [, signOutHandler] = useAtom(globalSignOutAction);
@@ -36,7 +40,7 @@ const InGameMenu: React.FC = () => {
 	return (
 		<div className='ingamemenu'>
 			{configMenu && <ConfigMenu />}
-			<span className="ingamemenu__message">{message}</span>
+			<span className='ingamemenu__message'>{message}</span>
 			<span className='ingamemenu__heading'>
 				Current Player: {activePlayer?.playerDisplayName}
 			</span>
@@ -59,22 +63,24 @@ const InGameMenu: React.FC = () => {
 			>
 				Main Menu
 			</Button>
-			<Button
-				variant='dark'
-				onClick={() => {
-					saveGameState();
-					setMessage("Game saved!");
-				}}
-				className='ingamemenu__btn'
-			>
-				Save Game
-			</Button>
+			{eventTriggeredOfType === EventType.END_GAME && (
+				<Button
+					variant='dark'
+					onClick={() => {
+						saveGameState();
+						setMessage("Game saved!");
+					}}
+					className='ingamemenu__btn'
+				>
+					Save Game
+				</Button>
+			)}
 			<Button
 				variant='dark'
 				onClick={() => toggleConfigMenu(!configMenu)}
 				className='ingamemenu__btn'
 			>
-				Show Config Menu
+				Toggle Dev Menu
 			</Button>
 		</div>
 	);
