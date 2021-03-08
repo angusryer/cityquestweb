@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAtom } from "jotai";
 import { computedGradeAndColor } from "../../gameActions";
 import "./Grade.scss";
@@ -13,4 +14,4 @@ const Grade = () => {
 	);
 };
 
-export default Grade;
+export default React.memo(Grade);

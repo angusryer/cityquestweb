@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
 import { EventType } from "../../enums";
@@ -23,4 +23,4 @@ const LevelUp = () => {
 	);
 };
 
-export default LevelUp;
+export default React.memo(LevelUp);

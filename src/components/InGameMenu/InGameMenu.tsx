@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
 import { EventType, Screen } from "../../enums";
@@ -82,4 +82,4 @@ const InGameMenu: React.FC = () => {
 	);
 };
 
-export default InGameMenu;
+export default React.memo(InGameMenu);

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import {
 	playerEnergyAtom,
@@ -8,7 +8,9 @@ import {
 	loadSavedGameAction,
 	createNewGameAction,
 	gameElapsedTimeAtom,
-	eventTriggeredOfTypeAtom
+	eventTriggeredOfTypeAtom,
+	shouldTimerBePausedAction,
+	shouldTriggerEndGameAction
 } from "../../gameActions";
 import { LoadType, EventType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
@@ -23,13 +25,15 @@ import Button from "react-bootstrap/Button";
 import { useInterval, getElapsedTimeString } from "../../helpers";
 import "./Game.scss";
 
-export default function Game() {
+function Game() {
 	const [inGameMenu, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
 	const [isLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
 	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(
 		eventTriggeredOfTypeAtom
 	);
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
+	const [shouldTimerBePaused] = useAtom(shouldTimerBePausedAction);
+	const [shouldTriggerEndGame] = useAtom(shouldTriggerEndGameAction);
 	const [, setPlayerEnergy] = useAtom(playerEnergyAtom);
 	const [, loadSavedGame] = useAtom(loadSavedGameAction);
 	const [, createNewGame] = useAtom(createNewGameAction);
@@ -46,13 +50,7 @@ export default function Game() {
 		() => {
 			setGameElapsedTime(gameElapsedTime + 1);
 		},
-		inGameMenu ||
-			eventTriggeredOfType === EventType.END_GAME ||
-			eventTriggeredOfType === EventType.LEVEL_UP ||
-			eventTriggeredOfType === EventType.WIN_GAME ||
-			isLoadingGameOfType === LoadType.NEW
-			? null
-			: 1000
+		inGameMenu || shouldTimerBePaused ? null : 1000
 	);
 
 	const toggleMenu = () => {
@@ -61,8 +59,7 @@ export default function Game() {
 	};
 
 	const triggerEnergyLost = () => {
-		setPlayerEnergy(0);
-		setEventTriggeredOfType(EventType.NO_ENERGY);
+		setPlayerEnergy(20);
 	};
 
 	const triggerWinGame = () => {
@@ -76,12 +73,12 @@ export default function Game() {
 	if (isLoadingGameOfType === LoadType.NEW) return <Intro />;
 	if (eventTriggeredOfType === EventType.LEVEL_UP) return <LevelUp />;
 	if (eventTriggeredOfType === EventType.WIN_GAME) return <WinGame />;
-	if (eventTriggeredOfType === EventType.END_GAME) return <EndGame />;
 
 	return (
 		<main className='game'>
 			<SvgIcon className='game__modal-icon' onClick={toggleMenu} />
 			{inGameMenu && <InGameMenu />}
+			{shouldTriggerEndGame && <EndGame />}
 			<section className='game__hud'>
 				<EnergyLevel />
 				{getElapsedTimeString(gameElapsedTime)}
@@ -115,3 +112,5 @@ export default function Game() {
 		</main>
 	);
 }
+
+export default React.memo(Game);

@@ -13,7 +13,7 @@ import {
 } from "../../gameActions";
 import { LoadType, Screen } from "../../enums";
 
-export default function Menu() {
+function Menu() {
 	const [activeScreen, setActiveScreen] = useAtom(activeScreenAtom);
 	const [playerData] = useAtom(playerDataAtom);
 	const [, setIsLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
@@ -79,3 +79,5 @@ export default function Menu() {
 		</main>
 	);
 }
+
+export default React.memo(Menu);

@@ -22,4 +22,4 @@ const SignIn: FunctionComponent<Hookback<ActivePlayer>> = ({
 	);
 };
 
-export default SignIn;
+export default React.memo(SignIn);

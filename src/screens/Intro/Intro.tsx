@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAtom } from "jotai";
 import { LoadType } from "../../enums";
 import { isLoadingGameOfTypeAtom } from "../../gameActions";
@@ -22,4 +23,4 @@ const Intro = () => {
 	);
 };
 
-export default Intro;
+export default React.memo(Intro);

@@ -1,8 +1,8 @@
 export enum Screen {
+	NONE,
 	AUTH,
 	GAME,
-	MENU,
-	END_GAME
+	MENU
 }
 
 export enum LoadType {
@@ -14,9 +14,9 @@ export enum LoadType {
 export enum EventType {
 	NONE,
 	END_GAME,
-	NO_ENERGY = END_GAME,
+	WIN_GAME,
+	NO_ENERGY,
+	IN_BLAST,
 	CLUE_FOUND,
-	IN_BLAST = END_GAME,
-	LEVEL_UP,
-	WIN_GAME
+	LEVEL_UP
 }

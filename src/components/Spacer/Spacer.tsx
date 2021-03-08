@@ -1,9 +1,9 @@
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 
 type ViewProps = {
 	className?: string;
 	sizeAndUnit?: string;
-}
+};
 
 const Spacer: FunctionComponent<ViewProps> = ({
 	className,
@@ -17,4 +17,4 @@ const Spacer: FunctionComponent<ViewProps> = ({
 	);
 };
 
-export default Spacer;
+export default React.memo(Spacer);

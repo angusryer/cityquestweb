@@ -1,9 +1,10 @@
+import React from "react";
 import Button from "react-bootstrap/Button";
 import Spacer from "../../components/Spacer";
 import { signInWithPopup } from "../../firebaseLogic";
 import "./Auth.scss";
 
-export default function Auth() {
+function Auth() {
 	return (
 		<main className='auth'>
 			<h1 className='auth__title'>You must authenticate.</h1>
@@ -18,3 +19,5 @@ export default function Auth() {
 		</main>
 	);
 }
+
+export default React.memo(Auth);

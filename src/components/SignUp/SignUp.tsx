@@ -24,4 +24,4 @@ const SignUp: FunctionComponent<ViewProps> = ({ callback }: ViewProps) => {
 	);
 };
 
-export default SignUp;
+export default React.memo(SignUp);

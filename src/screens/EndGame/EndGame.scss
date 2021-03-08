@@ -2,4 +2,5 @@
 
 .endgame {
     @include modal_background();
+	z-index: 100;
 }

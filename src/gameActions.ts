@@ -40,7 +40,7 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 		// TODO get from cache or server depending if online and/or which is newer
 		// TODO trigger a cache-to-server sync
 		if (playerData && Object.keys(playerData?.lastGameState).length > 0) {
-			const { lastGameState } = playerData; // was 'data' before
+			const { lastGameState } = playerData;
 			set(gameIdAtom, lastGameState.gameId);
 			set(gameStartTimeAtom, lastGameState.gameStartTime || 0);
 			set(gameLastStartTimeAtom, lastGameState.gameLastStartTime || 0);
@@ -118,13 +118,33 @@ export const loadLastGameAction = atom(null, (_get, set) => {
 const resetDefaultGameState = atom(null, (_get, set) => {
 	set(itemMenuAtom, false);
 	set(itemMenuMediaAtom, false);
-	set(winGameAtom, false);
 	set(fullScreenMediaAtom, false);
 	set(toggleConfigMenuAtom, false);
 	set(toggleInGameMenuAtom, false);
-	set(endGameAtom, false);
 	set(eventTriggeredOfTypeAtom, EventType.NONE);
 	set(activeScreenAtom, Screen.GAME);
+});
+
+export const shouldTimerBePausedAction = atom((get) => {
+	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
+	const isLoadingGameOfType = get(isLoadingGameOfTypeAtom);
+	return [
+		eventTriggeredOfType === EventType.END_GAME,
+		eventTriggeredOfType === EventType.LEVEL_UP,
+		eventTriggeredOfType === EventType.WIN_GAME,
+		eventTriggeredOfType === EventType.NO_ENERGY,
+		isLoadingGameOfType === LoadType.NEW
+	].some((item) => item === true);
+});
+
+export const shouldTriggerEndGameAction = atom((get) => {
+	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
+	console.log(eventTriggeredOfType);
+	return [
+		eventTriggeredOfType === EventType.END_GAME,
+		eventTriggeredOfType === EventType.WIN_GAME,
+		eventTriggeredOfType === EventType.NO_ENERGY
+	].some((triggerState: boolean): boolean => triggerState === true);
 });
 
 export const computedGradeAndColor = atom(

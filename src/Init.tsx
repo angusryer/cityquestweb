@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import { onUserStateChange, onPlayerDataChange } from "./firebaseLogic";
 import { activePlayerAtom, playerDataAtom } from "./gameActions";
@@ -6,7 +6,7 @@ import ScreenManager from "./ScreenManager";
 import Auth from "./screens/Auth";
 import Splash from "./screens/Splash";
 
-export default function Init() {
+function Init() {
 	const [activePlayer, setActivePlayer] = useAtom(activePlayerAtom);
 	const [playerData, setPlayerData] = useAtom(playerDataAtom);
 
@@ -26,3 +26,5 @@ export default function Init() {
 	if (activePlayer && playerData) return <ScreenManager />;
 	return <Splash />;
 }
+
+export default React.memo(Init);

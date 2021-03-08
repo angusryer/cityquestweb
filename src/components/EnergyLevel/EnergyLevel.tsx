@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAtom } from "jotai";
 import {
 	eventTriggeredOfTypeAtom,
@@ -11,9 +11,7 @@ import { EventType } from "../../enums";
 const EnergyLevel = () => {
 	const [energy, setPlayerEnergy] = useAtom(playerEnergyAtom);
 	const [elapsedGameTime] = useAtom(gameElapsedTimeAtom);
-	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(
-		eventTriggeredOfTypeAtom
-	);
+	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
 
 	const [missionTime] = useState<number>(30);
 
@@ -42,7 +40,7 @@ const EnergyLevel = () => {
 	useEffect(() => {
 		if (typeof energy === "number" && energy <= 0)
 			setEventTriggeredOfType(EventType.NO_ENERGY);
-	}, [energy, setEventTriggeredOfType, eventTriggeredOfType]);
+	}, [energy, setEventTriggeredOfType]);
 
 	useEffect(() => {
 		setPlayerEnergy(remainingEnergyCallback() * 100);
@@ -75,4 +73,4 @@ const EnergyLevel = () => {
 	);
 };
 
-export default EnergyLevel;
+export default React.memo(EnergyLevel);

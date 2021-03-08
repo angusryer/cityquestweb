@@ -38,4 +38,4 @@ const ConfigMenu = () => {
 	);
 };
 
-export default ConfigMenu;
+export default React.memo(ConfigMenu);
