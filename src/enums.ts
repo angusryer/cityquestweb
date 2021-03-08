@@ -1,7 +1,8 @@
 export enum Screen {
 	AUTH,
 	GAME,
-	MENU
+	MENU,
+	END_GAME
 }
 
 export enum LoadType {

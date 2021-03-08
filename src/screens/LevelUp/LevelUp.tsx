@@ -1,8 +1,26 @@
 import React from "react";
-import './LevelUp.scss';
+import { useAtom } from "jotai";
+import Button from "react-bootstrap/Button";
+import { EventType } from "../../enums";
+import { eventTriggeredOfTypeAtom } from "../../gameActions";
+import "./LevelUp.scss";
 
 const LevelUp = () => {
-	return <div>Level Up!</div>;
+	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
+
+	return (
+		<div>
+			<span>Level Up!</span>{" "}
+			<Button
+				variant='dark'
+				onClick={() => {
+					setEventTriggeredOfType(EventType.NONE);
+				}}
+			>
+				Continue!
+			</Button>
+		</div>
+	);
 };
 
 export default LevelUp;

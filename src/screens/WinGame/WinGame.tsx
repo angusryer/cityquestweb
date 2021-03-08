@@ -1,21 +1,25 @@
 import { useAtom } from "jotai";
-import React from "react";
-import { EventType } from "../../enums";
-import { eventTriggeredOfTypeAtom } from "../../gameActions";
+import Button from "react-bootstrap/Button";
+import { EventType, Screen } from "../../enums";
+import { activeScreenAtom, eventTriggeredOfTypeAtom } from "../../gameActions";
 import "./WinGame.scss";
 
 const WinGame = () => {
 	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
+	const [, setActiveScreen] = useAtom(activeScreenAtom);
 
 	return (
 		<div>
 			<span>You win!</span>
-			<button
-				type='button'
-				onClick={() => setEventTriggeredOfType(EventType.NONE)}
+			<Button
+				variant='dark'
+				onClick={() => {
+					setEventTriggeredOfType(EventType.NONE);
+					setActiveScreen(Screen.END_GAME);
+				}}
 			>
-				Begin
-			</button>
+				Head Home
+			</Button>
 		</div>
 	);
 };

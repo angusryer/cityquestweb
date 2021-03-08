@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { atom } from "jotai";
 import { v4 as uuid } from "uuid";
-import { getPlayerData, signOut, storeGameInDb } from "./firebaseLogic";
+import { signOut, storeGameInDb } from "./firebaseLogic";
 import { LoadType, Screen, EventType } from "./enums";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here

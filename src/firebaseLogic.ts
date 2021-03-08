@@ -1,5 +1,4 @@
 import { firebase, auth, db } from "./firebaseConfig";
-import { playerDataAtom } from "./gameActions";
 
 //** Firebase Auth Operations */
 
@@ -92,14 +91,6 @@ export const getAndSetPlayerData = async (
 		playerData: data?.playerData,
 		lastGameState: data?.lastGameState
 	});
-};
-
-export const getPlayerData = async (
-	playerId: string
-): Promise<PlayerData | null> => {
-	const data = await (await db.collection("users").doc(playerId).get()).data();
-	if (data) return data as PlayerData;
-	return null;
 };
 
 export const storeGameInDb = async (

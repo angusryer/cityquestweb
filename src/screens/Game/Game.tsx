@@ -19,6 +19,7 @@ import WinGame from "../WinGame";
 import EndGame from "../EndGame";
 import Intro from "../Intro";
 import SvgIcon from "@material-ui/icons/Settings";
+import Button from "react-bootstrap/Button";
 import { useInterval, getElapsedTimeString } from "../../helpers";
 import "./Game.scss";
 
@@ -45,7 +46,13 @@ export default function Game() {
 		() => {
 			setGameElapsedTime(gameElapsedTime + 1);
 		},
-		inGameMenu || eventTriggeredOfType === EventType.NO_ENERGY ? null : 1000
+		inGameMenu ||
+			eventTriggeredOfType === EventType.END_GAME ||
+			eventTriggeredOfType === EventType.LEVEL_UP ||
+			eventTriggeredOfType === EventType.WIN_GAME ||
+			isLoadingGameOfType === LoadType.NEW
+			? null
+			: 1000
 	);
 
 	const toggleMenu = () => {
@@ -83,12 +90,27 @@ export default function Game() {
 			<section className='game__media'></section>
 			<section className='game__info'></section>
 			<section className='game__map'>
-				<button type='button' onClick={triggerEnergyLost}>
-					Lose All Energy! (Just for Testing)
-				</button>
-				<button type='button' onClick={triggerWinGame}>
+				<Button
+					variant='dark'
+					className='game__map-btn'
+					onClick={triggerEnergyLost}
+				>
+					Lose All Energy!
+				</Button>
+				<Button
+					variant='dark'
+					className='game__map-btn'
+					onClick={triggerLevelUp}
+				>
+					Level Up
+				</Button>
+				<Button
+					variant='dark'
+					className='game__map-btn'
+					onClick={triggerWinGame}
+				>
 					Go for the win!
-				</button>
+				</Button>
 			</section>
 		</main>
 	);

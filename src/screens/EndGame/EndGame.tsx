@@ -1,9 +1,26 @@
-import './EndGame.scss';
+import React from "react";
+import { useAtom } from "jotai";
+import Button from "react-bootstrap/Button";
+import { EventType, Screen } from "../../enums";
+import { activeScreenAtom, eventTriggeredOfTypeAtom } from "../../gameActions";
+import "./EndGame.scss";
 
 const EndGame = () => {
+	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
+	const [, setActiveScreen] = useAtom(activeScreenAtom);
+
 	return (
-		<div className='endgame'>
-			<span>You LOSE.</span>
+		<div>
+			<span>You Lose</span>{" "}
+			<Button
+				variant='dark'
+				onClick={() => {
+					setEventTriggeredOfType(EventType.NONE);
+					setActiveScreen(Screen.END_GAME);
+				}}
+			>
+				Head Home
+			</Button>
 		</div>
 	);
 };
