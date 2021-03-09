@@ -6,11 +6,11 @@ import { activeScreenAtom, eventTriggeredOfTypeAtom } from "../../gameActions";
 import "./WinGame.scss";
 
 const WinGame = () => {
-	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
+	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 
 	const goBackToMainMenu = () => {
-		console.log("WinGame (NONE) ==> ", Date.now())
+		console.log("WinGame goBackToMainMenu ", eventTriggeredOfType)
 		setEventTriggeredOfType(EventType.NONE);
 		setActiveScreen(Screen.NONE);
 	};

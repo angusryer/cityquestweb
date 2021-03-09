@@ -117,19 +117,21 @@ export const loadLastGameAction = atom(null, (_get, set) => {
 });
 
 //** Must keep these updated as Screen Routing Atoms are added */
-const resetDefaultGameState = atom(null, (_get, set) => {
+const resetDefaultGameState = atom(null, (get, set) => {
+	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
 	set(itemMenuAtom, false);
 	set(itemMenuMediaAtom, false);
 	set(fullScreenMediaAtom, false);
 	set(toggleConfigMenuAtom, false);
 	set(toggleInGameMenuAtom, false);
-	console.log("gameActions (NONE) ==> ", Date.now());
+	console.log("gameActions resetDefaultGameState ==> ", eventTriggeredOfType);
 	set(eventTriggeredOfTypeAtom, EventType.NONE);
 	set(activeScreenAtom, Screen.GAME);
 });
 
 export const shouldTimerBePausedAction = atom((get) => {
 	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
+	console.log("gameActions shouldTimerBePausedAction ==> ", eventTriggeredOfType);
 	const isLoadingGameOfType = get(isLoadingGameOfTypeAtom);
 	return [
 		eventTriggeredOfType === EventType.END_GAME,
@@ -142,6 +144,7 @@ export const shouldTimerBePausedAction = atom((get) => {
 
 export const shouldTriggerEndGameAction = atom((get) => {
 	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
+	console.log("gameActions shouldTriggerEndGameAction ==> ", eventTriggeredOfType);
 	return [
 		eventTriggeredOfType === EventType.END_GAME,
 		eventTriggeredOfType === EventType.WIN_GAME,

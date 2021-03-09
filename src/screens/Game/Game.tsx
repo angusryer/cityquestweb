@@ -32,8 +32,8 @@ function Game() {
 		eventTriggeredOfTypeAtom
 	);
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
-	const [shouldTimerBePaused] = useAtom(shouldTimerBePausedAction);
 	const [shouldTriggerEndGame] = useAtom(shouldTriggerEndGameAction);
+	const [shouldTimerBePaused] = useAtom(shouldTimerBePausedAction);
 	const [, setPlayerEnergy] = useAtom(playerEnergyAtom);
 	const [, loadSavedGame] = useAtom(loadSavedGameAction);
 	const [, createNewGame] = useAtom(createNewGameAction);
@@ -63,12 +63,12 @@ function Game() {
 	};
 
 	const triggerWinGame = () => {
-		console.log("Game (WIN_GAME) ==> ", Date.now());
+		console.log("Game triggerWinGame ", eventTriggeredOfType)
 		setEventTriggeredOfType(EventType.WIN_GAME);
 	};
 
 	const triggerLevelUp = () => {
-		console.log("Game (LEVEL_UP) ==> ", Date.now());
+		console.log("Game triggerLevelUp ", eventTriggeredOfType)
 		setEventTriggeredOfType(EventType.LEVEL_UP);
 	};
 
@@ -92,7 +92,7 @@ function Game() {
 				<Button
 					variant='dark'
 					className='game__map-btn'
-					onClick={() => triggerEnergyLost()}
+					onClick={triggerEnergyLost}
 				>
 					Lose All Energy!
 				</Button>
