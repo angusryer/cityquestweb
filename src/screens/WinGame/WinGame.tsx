@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useAtom } from "jotai";
 import Button from "react-bootstrap/Button";
 import { EventType, Screen } from "../../enums";
@@ -9,16 +9,16 @@ const WinGame = () => {
 	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 
+	const goBackToMainMenu = () => {
+		console.log("WinGame (NONE) ==> ", Date.now())
+		setEventTriggeredOfType(EventType.NONE);
+		setActiveScreen(Screen.NONE);
+	};
+
 	return (
-		<div className="wingame">
+		<div className='wingame'>
 			<span>You win!</span>{" "}
-			<Button
-				variant='dark'
-				onClick={() => {
-					setEventTriggeredOfType(EventType.NONE);
-					setActiveScreen(Screen.NONE);
-				}}
-			>
+			<Button variant='dark' onClick={goBackToMainMenu}>
 				Head Home
 			</Button>
 		</div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAtom } from "jotai";
 import {
 	eventTriggeredOfTypeAtom,
@@ -19,6 +19,8 @@ const EnergyLevel = () => {
 	// + the maximum energy time will be used to calculate
 	// + percentage of energy consumed. For now, we'll hardcode it.
 
+	// fix: modifying playerEnergy from anywhere else is overridden by the below calcs
+
 	const widthValue = 100;
 	const widthUnit = "px";
 
@@ -37,14 +39,17 @@ const EnergyLevel = () => {
 		missionTime
 	]);
 
+	const setEventTriggeredOfTypeRef = useRef(setEventTriggeredOfType);
 	useEffect(() => {
 		if (typeof energy === "number" && energy <= 0)
-			setEventTriggeredOfType(EventType.NO_ENERGY);
-	}, [energy, setEventTriggeredOfType]);
+		console.log("EnergyLevel ==> ", Date.now())
+		setEventTriggeredOfTypeRef.current(EventType.NO_ENERGY);
+	}, [energy]);
 
+	const setPlayerEnergyRef = useRef(setPlayerEnergy);
 	useEffect(() => {
-		setPlayerEnergy(remainingEnergyCallback() * 100);
-	}, [elapsedGameTime, setPlayerEnergy, remainingEnergyCallback]);
+		setPlayerEnergyRef.current(remainingEnergyCallback() * 100);
+	}, [elapsedGameTime, remainingEnergyCallback]);
 
 	const criticalityColor = () => {
 		if (energy) {

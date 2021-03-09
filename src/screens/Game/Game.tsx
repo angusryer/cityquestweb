@@ -59,14 +59,16 @@ function Game() {
 	};
 
 	const triggerEnergyLost = () => {
-		setPlayerEnergy(20);
+		setPlayerEnergy(0);
 	};
 
 	const triggerWinGame = () => {
+		console.log("Game (WIN_GAME) ==> ", Date.now());
 		setEventTriggeredOfType(EventType.WIN_GAME);
 	};
 
 	const triggerLevelUp = () => {
+		console.log("Game (LEVEL_UP) ==> ", Date.now());
 		setEventTriggeredOfType(EventType.LEVEL_UP);
 	};
 
@@ -90,7 +92,7 @@ function Game() {
 				<Button
 					variant='dark'
 					className='game__map-btn'
-					onClick={triggerEnergyLost}
+					onClick={() => triggerEnergyLost()}
 				>
 					Lose All Energy!
 				</Button>

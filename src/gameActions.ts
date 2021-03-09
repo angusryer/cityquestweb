@@ -50,7 +50,9 @@ export const loadSavedGameAction = atom(null, async (get, set) => {
 			set(playerScoreAtom, lastGameState.playerScore);
 			set(playerItemsAtom, lastGameState.playerItems);
 		} else {
-			set(createNewGameAction, null);
+			throw new Error(
+				"gameActions Error: Unable to find lastGameState object."
+			);
 		}
 	}
 });
@@ -121,6 +123,7 @@ const resetDefaultGameState = atom(null, (_get, set) => {
 	set(fullScreenMediaAtom, false);
 	set(toggleConfigMenuAtom, false);
 	set(toggleInGameMenuAtom, false);
+	console.log("gameActions (NONE) ==> ", Date.now());
 	set(eventTriggeredOfTypeAtom, EventType.NONE);
 	set(activeScreenAtom, Screen.GAME);
 });
@@ -139,7 +142,6 @@ export const shouldTimerBePausedAction = atom((get) => {
 
 export const shouldTriggerEndGameAction = atom((get) => {
 	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
-	console.log(eventTriggeredOfType);
 	return [
 		eventTriggeredOfType === EventType.END_GAME,
 		eventTriggeredOfType === EventType.WIN_GAME,
