@@ -3,15 +3,17 @@ import { atom } from "jotai";
 import { v4 as uuid } from "uuid";
 import { signOut, storeGameInDb } from "./firebaseLogic";
 import { LoadType, Screen, EventType } from "./enums";
+import { isConstructorDeclaration } from "typescript";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
 export const activePlayerAtom = atom<ActivePlayer | null>(null);
 export const playerDataAtom = atom<PlayerData | null>(null);
 export const activeScreenAtom = atom<number>(Screen.AUTH);
-export const isLoadingGameOfTypeAtom = atom<number>(LoadType.NEW);
+export const isLoadingGameOfTypeAtom = atom<number>(LoadType.NONE);
 export const eventTriggeredOfTypeAtom = atom<number>(EventType.NONE);
 export const toggleConfigMenuAtom = atom<boolean>(false);
 export const toggleInGameMenuAtom = atom<boolean>(false);
+export const toggleDebugMenuAtom = atom<boolean>(false);
 export const timerActiveToggleAtom = atom<boolean>(false);
 
 //** Screen routing states */
@@ -27,50 +29,60 @@ export const gameStartTimeAtom = atom<number>(0);
 export const gameElapsedTimeAtom = atom<number>(0);
 export const gameLastStartTimeAtom = atom<number>(0);
 export const playerEnergyAtom = atom<number | undefined>(100);
+export const playerAccumulatedEnergyAtom = atom<number | undefined>(0);
 export const playerScoreAtom = atom<number | undefined>(100);
 export const playerLocationAtom = atom<Coordinates | undefined>([0, 0]);
 export const playerItemsAtom = atom<Array<GameObject> | undefined>([
 	{ id: "1", name: "Museum Hours", type: "Clue" }
 ]);
+export const missionTimeAtom = atom<number>(60);
 
-//** KEEP UPDATING AS NEW ATOMS ARE ADDED */
-export const loadSavedGameAction = atom(null, async (get, set) => {
-	const playerData = get(playerDataAtom);
-	if (playerData) {
-		// TODO get from cache or server depending if online and/or which is newer
-		// TODO trigger a cache-to-server sync
-		if (playerData && Object.keys(playerData?.lastGameState).length > 0) {
-			const { lastGameState } = playerData;
-			set(gameIdAtom, lastGameState.gameId);
-			set(gameStartTimeAtom, lastGameState.gameStartTime || 0);
-			set(gameLastStartTimeAtom, lastGameState.gameLastStartTime || 0);
-			set(gameElapsedTimeAtom, lastGameState.gameElapsedTime || 0);
-			set(playerLocationAtom, lastGameState.playerLocation);
-			set(playerEnergyAtom, lastGameState.playerEnergy);
-			set(playerScoreAtom, lastGameState.playerScore);
-			set(playerItemsAtom, lastGameState.playerItems);
-		} else {
-			throw new Error(
-				"gameActions Error: Unable to find lastGameState object."
-			);
-		}
+//** Must keep these updated as Screen Routing Atoms are added */
+const resetDefaultGameState = atom(null, (get, set) => {
+	set(itemMenuAtom, false);
+	set(itemMenuMediaAtom, false);
+	set(fullScreenMediaAtom, false);
+	set(toggleConfigMenuAtom, false);
+	set(toggleInGameMenuAtom, false);
+	set(toggleDebugMenuAtom, false);
+	set(eventTriggeredOfTypeAtom, EventType.NONE);
+	set(activeScreenAtom, Screen.GAME);
+});
+
+export const shouldTimerBePausedAction = atom((get) => {
+	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
+	const isLoadingGameOfType = get(isLoadingGameOfTypeAtom);
+	return [
+		eventTriggeredOfType === EventType.END_GAME,
+		eventTriggeredOfType === EventType.LEVEL_UP,
+		eventTriggeredOfType === EventType.WIN_GAME,
+		eventTriggeredOfType === EventType.NO_ENERGY,
+		isLoadingGameOfType === LoadType.NEW
+	].some((item) => item === true);
+});
+
+export const shouldTriggerEndGameAction = atom((get) => {
+	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
+	return [
+		eventTriggeredOfType === EventType.END_GAME,
+		eventTriggeredOfType === EventType.WIN_GAME,
+		eventTriggeredOfType === EventType.NO_ENERGY
+	].some((triggerState: boolean): boolean => triggerState === true);
+});
+
+export const accumulatedEnergyAction = atom(
+	(get) => get(playerAccumulatedEnergyAtom),
+	(get, set, modifierValue: number) => {
+		const currentAccumulatedEnergy = get(playerAccumulatedEnergyAtom);
+		set(
+			playerAccumulatedEnergyAtom,
+			(currentAccumulatedEnergy || 0) + modifierValue
+		);
 	}
-});
+);
 
 //** KEEP UPDATING AS NEW ATOMS ARE ADDED */
-export const createNewGameAction = atom(null, (_get, set) => {
-	set(gameIdAtom, uuid());
-	set(gameStartTimeAtom, Date.now());
-	set(gameLastStartTimeAtom, Date.now());
-	set(gameElapsedTimeAtom, 0);
-	set(playerLocationAtom, [0, 0]);
-	set(playerEnergyAtom, 100);
-	set(playerScoreAtom, 100);
-	set(playerItemsAtom, [{ id: "1", name: "Museum Hours", type: "Clue" }]);
-});
-
-//** KEEP UPDATING AS NEW ATOMS ARE ADDED */
-export const saveGameStateAction = atom({} as GameState, (get, set) => {
+export const saveGameStateAction = atom({} as GameState, (get, _set) => {
 	const activePlayer = get(activePlayerAtom);
 	const snapshot: GameState = {
 		gameId: get(gameIdAtom),
@@ -79,6 +91,7 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 		gameElapsedTime: get(gameElapsedTimeAtom),
 		playerLocation: get(playerLocationAtom),
 		playerEnergy: get(playerEnergyAtom),
+		playerAccumulatedEnergy: get(playerAccumulatedEnergyAtom),
 		playerScore: get(playerScoreAtom),
 		playerItems: get(playerItemsAtom)
 	};
@@ -86,6 +99,45 @@ export const saveGameStateAction = atom({} as GameState, (get, set) => {
 		// TODO send to cache or server depending if online
 		// TODO trigger a cache-to-server sync
 		storeGameInDb(snapshot, activePlayer.playerId);
+	}
+});
+
+//** KEEP UPDATING AS NEW ATOMS ARE ADDED */
+export const startNewGameAction = atom(null, (_get, set) => {
+	set(resetDefaultGameState, null);
+	set(gameIdAtom, uuid());
+	set(gameStartTimeAtom, Date.now());
+	set(gameLastStartTimeAtom, Date.now());
+	set(gameElapsedTimeAtom, 0);
+	set(playerLocationAtom, [0, 0]);
+	set(playerEnergyAtom, 100);
+	set(playerAccumulatedEnergyAtom, 0);
+	set(playerScoreAtom, 100);
+	set(playerItemsAtom, [{ id: "1", name: "Museum Hours", type: "Clue" }]);
+	set(isLoadingGameOfTypeAtom, LoadType.NEW);
+});
+
+//** KEEP UPDATING AS NEW ATOMS ARE ADDED */
+export const loadLastGameAction = atom(null, (get, set) => {
+	const playerData = get(playerDataAtom);
+	if (playerData) {
+		// TODO get from cache or server depending if online and/or which is newer
+		// TODO trigger a cache-to-server sync
+		set(resetDefaultGameState, null);
+		if (playerData && Object.keys(playerData?.lastGameState).length > 0) {
+			const { lastGameState } = playerData;
+			set(gameIdAtom, lastGameState.gameId);
+			set(gameStartTimeAtom, lastGameState.gameStartTime || 0);
+			set(gameLastStartTimeAtom, lastGameState.gameLastStartTime || 0);
+			set(gameElapsedTimeAtom, lastGameState.gameElapsedTime || 0);
+			set(playerLocationAtom, lastGameState.playerLocation);
+			set(playerEnergyAtom, lastGameState.playerEnergy);
+			set(playerAccumulatedEnergyAtom, lastGameState.playerAccumulatedEnergy);
+			set(playerScoreAtom, lastGameState.playerScore);
+			set(playerItemsAtom, lastGameState.playerItems);
+		}
+	} else {
+		throw new Error("gameActions Error: Unable to find playerData object.");
 	}
 });
 
@@ -100,56 +152,52 @@ export const playerAgreesToShareLocation = atom(
 export const globalSignOutAction = atom(null, (_get, set) => {
 	set(activePlayerAtom, null);
 	set(playerDataAtom, null);
-	set(isLoadingGameOfTypeAtom, LoadType.NEW);
 	set(toggleConfigMenuAtom, false);
+	set(toggleDebugMenuAtom, false);
+	set(isLoadingGameOfTypeAtom, LoadType.NONE);
 	set(activeScreenAtom, Screen.AUTH);
 	signOut();
 });
 
-export const startNewGameAction = atom(null, (_get, set) => {
-	set(resetDefaultGameState, null);
-	set(isLoadingGameOfTypeAtom, LoadType.NEW);
-});
+const getLocationPermissions = async () => {
+	if (window !== undefined) {
+		await navigator.geolocation.getCurrentPosition(
+			(position) => {
+				// + set permissions
+				// + store position
+				console.log(
+					"navigator.geolocation.getCurrentPosition() ==> ",
+					position
+				);
+			},
+			(err) => {
+				throw new Error(
+					`Cannot play game if cannot know position! ${err.message}`
+				);
+			}
+		);
+	}
+};
 
-export const loadLastGameAction = atom(null, (_get, set) => {
-	set(resetDefaultGameState, null);
-	set(isLoadingGameOfTypeAtom, LoadType.SAVED);
-});
+const getCameraPermissions = async () => {
+	if (window !== undefined) {
+		console.log("navigator.mediaDevices ==> ", navigator.mediaDevices);
+	}
+};
 
-//** Must keep these updated as Screen Routing Atoms are added */
-const resetDefaultGameState = atom(null, (get, set) => {
-	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
-	set(itemMenuAtom, false);
-	set(itemMenuMediaAtom, false);
-	set(fullScreenMediaAtom, false);
-	set(toggleConfigMenuAtom, false);
-	set(toggleInGameMenuAtom, false);
-	console.log("gameActions resetDefaultGameState ==> ", eventTriggeredOfType);
-	set(eventTriggeredOfTypeAtom, EventType.NONE);
-	set(activeScreenAtom, Screen.GAME);
-});
+const getLocalStoragePermissions = async () => {
+	if (window !== undefined) {
+		console.log("navigator.permissions ==> ", navigator.permissions);
+	}
+};
 
-export const shouldTimerBePausedAction = atom((get) => {
-	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
-	console.log("gameActions shouldTimerBePausedAction ==> ", eventTriggeredOfType);
-	const isLoadingGameOfType = get(isLoadingGameOfTypeAtom);
-	return [
-		eventTriggeredOfType === EventType.END_GAME,
-		eventTriggeredOfType === EventType.LEVEL_UP,
-		eventTriggeredOfType === EventType.WIN_GAME,
-		eventTriggeredOfType === EventType.NO_ENERGY,
-		isLoadingGameOfType === LoadType.NEW
-	].some((item) => item === true);
-});
-
-export const shouldTriggerEndGameAction = atom((get) => {
-	const eventTriggeredOfType = get(eventTriggeredOfTypeAtom);
-	console.log("gameActions shouldTriggerEndGameAction ==> ", eventTriggeredOfType);
-	return [
-		eventTriggeredOfType === EventType.END_GAME,
-		eventTriggeredOfType === EventType.WIN_GAME,
-		eventTriggeredOfType === EventType.NO_ENERGY
-	].some((triggerState: boolean): boolean => triggerState === true);
+export const playerPermissionsAction = atom(null, async (get, _set) => {
+	const data = get(playerDataAtom);
+	if (!data?.playerData?.permissions) {
+		await getLocationPermissions();
+		await getCameraPermissions();
+		await getLocalStoragePermissions();
+	}
 });
 
 export const computedGradeAndColor = atom(
@@ -214,31 +262,6 @@ export function useCachedState() {
 export const getCurrentLocation = (): Coordinates => {
 	// TODO get and return current user location
 	return [43, 78];
-};
-
-export const shouldSkipMainMenu = (data: PlayerData): boolean => {
-	if (data?.playerData.skipMenu === true) return true;
-	return false;
-};
-
-export const useGameTimer = () => {
-	const [isActive, toggleTimer] = useState(false);
-	const [time, setTimeValue] = useState(0);
-	const resetTimer = () => {
-		toggleTimer(false);
-		setTimeValue(0);
-	};
-
-	useEffect(() => {
-		if (isActive) {
-			setInterval(() => {
-				setTimeValue((time) => time + 1);
-			}, 1000);
-		}
-		return () => clearInterval();
-	});
-
-	return [time, toggleTimer, resetTimer] as const;
 };
 
 //** KEEP SYNC WITH CACHE USING REACT-QUERY */

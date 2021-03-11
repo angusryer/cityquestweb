@@ -22,3 +22,11 @@ div {
 	flex-direction: column;
 	width: 100%;
 }
+
+.base__debug {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	z-index: 101;
+	opacity: 0.4;
+}

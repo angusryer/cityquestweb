@@ -6,11 +6,10 @@ import { activeScreenAtom, eventTriggeredOfTypeAtom } from "../../gameActions";
 import "./EndGame.scss";
 
 const EndGame = () => {
-	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
+	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
 	const [, setActiveScreen] = useAtom(activeScreenAtom);
 
 	const goBackToMainMenu = () => {
-		console.log("EndGame goBackToMainMenu ", eventTriggeredOfType)
 		setEventTriggeredOfType(EventType.NONE);
 		setActiveScreen(Screen.NONE);
 	};

@@ -18,5 +18,21 @@ export enum EventType {
 	NO_ENERGY,
 	IN_BLAST,
 	CLUE_FOUND,
-	LEVEL_UP
+	LEVEL_UP,
+	LEVEL_DOWN
+}
+
+export enum EnergyColors {
+	NONE = "grey",
+	CRITICAL = "red",
+	LOW = "orange",
+	MEDIUM = "gold",
+	HIGH = "green"
+}
+
+export enum EnergyThresholds {
+	CRITICAL = 20,
+	LOW = 40,
+	MEDIUM = 60,
+	HIGH = 80
 }

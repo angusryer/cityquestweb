@@ -1,12 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useAtom } from "jotai";
 import {
-	playerEnergyAtom,
 	toggleInGameMenuAtom,
+	toggleDebugMenuAtom,
 	toggleConfigMenuAtom,
 	isLoadingGameOfTypeAtom,
-	loadSavedGameAction,
-	createNewGameAction,
 	gameElapsedTimeAtom,
 	eventTriggeredOfTypeAtom,
 	shouldTimerBePausedAction,
@@ -19,36 +17,26 @@ import Grade from "../../components/Grade";
 import LevelUp from "../LevelUp";
 import WinGame from "../WinGame";
 import EndGame from "../EndGame";
+import DebugMenu from "../DebugMenu";
 import Intro from "../Intro";
 import SvgIcon from "@material-ui/icons/Settings";
-import Button from "react-bootstrap/Button";
 import { useInterval, getElapsedTimeString } from "../../helpers";
 import "./Game.scss";
 
 function Game() {
+	const [debugMenu, toggleDebugMenu] = useAtom(toggleDebugMenuAtom);
 	const [inGameMenu, toggleInGameMenu] = useAtom(toggleInGameMenuAtom);
 	const [isLoadingGameOfType] = useAtom(isLoadingGameOfTypeAtom);
-	const [eventTriggeredOfType, setEventTriggeredOfType] = useAtom(
-		eventTriggeredOfTypeAtom
-	);
+	const [eventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
 	const [shouldTriggerEndGame] = useAtom(shouldTriggerEndGameAction);
 	const [shouldTimerBePaused] = useAtom(shouldTimerBePausedAction);
-	const [, setPlayerEnergy] = useAtom(playerEnergyAtom);
-	const [, loadSavedGame] = useAtom(loadSavedGameAction);
-	const [, createNewGame] = useAtom(createNewGameAction);
 	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 
-	const loadSavedGameRef = useRef(loadSavedGame);
-	const createNewGameRef = useRef(createNewGame);
-	useEffect(() => {
-		if (isLoadingGameOfType === LoadType.SAVED) loadSavedGameRef.current();
-		if (isLoadingGameOfType === LoadType.NEW) createNewGameRef.current();
-	}, [isLoadingGameOfType]);
-
+	// In-game timer
 	useInterval(
 		() => {
-			setGameElapsedTime(gameElapsedTime + 1);
+			setGameElapsedTime((time) => time + 1);
 		},
 		inGameMenu || shouldTimerBePaused ? null : 1000
 	);
@@ -58,18 +46,8 @@ function Game() {
 		toggleConfigMenu(false);
 	};
 
-	const triggerEnergyLost = () => {
-		setPlayerEnergy(0);
-	};
-
-	const triggerWinGame = () => {
-		console.log("Game triggerWinGame ", eventTriggeredOfType)
-		setEventTriggeredOfType(EventType.WIN_GAME);
-	};
-
-	const triggerLevelUp = () => {
-		console.log("Game triggerLevelUp ", eventTriggeredOfType)
-		setEventTriggeredOfType(EventType.LEVEL_UP);
+	const toggleDebug = () => {
+		toggleDebugMenu(!debugMenu);
 	};
 
 	if (isLoadingGameOfType === LoadType.NEW) return <Intro />;
@@ -88,29 +66,9 @@ function Game() {
 			</section>
 			<section className='game__media'></section>
 			<section className='game__info'></section>
-			<section className='game__map'>
-				<Button
-					variant='dark'
-					className='game__map-btn'
-					onClick={triggerEnergyLost}
-				>
-					Lose All Energy!
-				</Button>
-				<Button
-					variant='dark'
-					className='game__map-btn'
-					onClick={triggerLevelUp}
-				>
-					Level Up
-				</Button>
-				<Button
-					variant='dark'
-					className='game__map-btn'
-					onClick={triggerWinGame}
-				>
-					Go for the win!
-				</Button>
-			</section>
+			<section className='game__map'></section>
+			<SvgIcon className='base__debug' onClick={toggleDebug} />
+			{debugMenu && <DebugMenu />}
 		</main>
 	);
 }

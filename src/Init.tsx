@@ -1,14 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import { onUserStateChange, onPlayerDataChange } from "./firebaseLogic";
-import { activePlayerAtom, playerDataAtom } from "./gameActions";
-import ScreenManager from "./ScreenManager";
+import {
+	activePlayerAtom,
+	playerDataAtom,
+	playerPermissionsAction
+} from "./gameActions";
+import ScreenManager from "./screens/ScreenManager";
 import Auth from "./screens/Auth";
 import Splash from "./screens/Splash";
 
 function Init() {
 	const [activePlayer, setActivePlayer] = useAtom(activePlayerAtom);
 	const [playerData, setPlayerData] = useAtom(playerDataAtom);
+	const [, getPlayerPermissions] = useAtom(playerPermissionsAction);
 
 	const setActivePlayerRef = useRef(setActivePlayer);
 	useEffect(() => {
@@ -22,9 +27,16 @@ function Init() {
 		}
 	}, [activePlayer]);
 
+	const getPlayerPermissionsRef = useRef(getPlayerPermissions);
+	useEffect(() => {
+		if (playerData) {
+			getPlayerPermissionsRef.current();
+		}
+	}, [playerData]);
+
 	if (!activePlayer) return <Auth />;
 	if (activePlayer && playerData) return <ScreenManager />;
 	return <Splash />;
 }
 
-export default React.memo(Init);
+export default Init;

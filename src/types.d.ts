@@ -23,7 +23,11 @@ type PlayerData = {
 		skipMenu?: boolean;
 		cacheVideos?: boolean;
 		audioVolume?: number;
-		userAgreesToShareLocation?: boolean;
+		permissions?: {
+			userAgreesToShareLocation?: boolean;
+			userAgreesToUseCamera?: boolean;
+			userAgreesToStoreLocalData?: boolean;
+		}
 	};
 	lastGameState: GameState;
 };
@@ -35,6 +39,7 @@ type GameState = object & {
 	gameElapsedTime?: number;
 	playerLocation?: Coordinates;
 	playerEnergy?: number;
+	playerAccumulatedEnergy?: number;
 	playerScore?: number;
 	playerItems?: Array<GameObject>;
 };

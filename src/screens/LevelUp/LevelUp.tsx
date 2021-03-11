@@ -14,7 +14,6 @@ const LevelUp = () => {
 			<Button
 				variant='dark'
 				onClick={() => {
-					console.log("LevelUp (NONE) ==> ", Date.now());
 					setEventTriggeredOfType(EventType.NONE);
 				}}
 			>

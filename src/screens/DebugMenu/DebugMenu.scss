@@ -1,0 +1,23 @@
+@import "../../globalStyles/mixins";
+
+.debugmenu {
+	position: absolute;
+	max-height: 40%;
+    overflow-y: scroll;
+	bottom: 0;
+	width: 100%;
+	z-index: 100;
+	background-color: rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-flow: row;
+	flex-wrap: wrap;
+    padding-right: 44px;
+
+    &__btn {
+        padding: 1px !important;
+        margin: 2px;
+        width: 36px;
+        height: 36px;
+        font-size: 10px !important;
+    }
+}
