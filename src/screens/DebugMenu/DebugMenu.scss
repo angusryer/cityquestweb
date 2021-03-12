@@ -1,23 +1,46 @@
 @import "../../globalStyles/mixins";
 
 .debugmenu {
+	@include modal_background(0.3);
 	position: absolute;
 	max-height: 40%;
-    overflow-y: scroll;
 	bottom: 0;
 	width: 100%;
 	z-index: 100;
-	background-color: rgba(0, 0, 0, 0.2);
 	display: flex;
-	flex-flow: row;
-	flex-wrap: wrap;
-    padding-right: 44px;
+	flex-flow: column;
+	padding-top: 10px;
 
-    &__btn {
-        padding: 1px !important;
-        margin: 2px;
-        width: 36px;
-        height: 36px;
-        font-size: 10px !important;
-    }
+	&__info {
+		overflow-y: scroll;
+		&-ul {
+			height: 100%;
+			overflow-y: scroll;
+			margin-top: 5px;
+		}
+
+		&-li {
+			line-height: 1.4;
+			font-size: 0.9rem;
+			margin-bottom: 6px;
+		}
+	}
+
+	&__controls {
+        overflow-x: scroll;
+        height: 100px;
+        width: calc(100% - 42px);
+        display: flex;
+        flex-flow: row nowrap;
+        margin-right: auto;
+		&-btn {
+			padding: 1px !important;
+			margin: 2px;
+            min-width: 36px;
+			max-width: 36px;
+			min-height: 36px;
+			max-height: 36px;
+			font-size: 10px !important;
+		}
+	}
 }

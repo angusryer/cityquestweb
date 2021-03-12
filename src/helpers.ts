@@ -75,3 +75,26 @@ export function useInterval(
 	// In case you want to manually clear the interval from the consuming component...:
 	return intervalRef;
 }
+
+export function useLocationWatcher(callback: (position?: Coordinates) => void) {
+	const watchIdRef = useRef<number | null>(null);
+	const callbackRef = useRef(callback);
+
+	useEffect(() => {
+		callbackRef.current = callback;
+	}, [callback]);
+
+	useEffect(() => {
+		watchIdRef.current = navigator.geolocation.watchPosition((data) => {
+			const locationData: Coordinates = {
+				acc: data.coords.accuracy,
+				lat: data.coords.latitude,
+				long: data.coords.longitude
+			};
+			callbackRef.current(locationData);
+		});
+		return () => navigator.geolocation.clearWatch(watchIdRef.current || 0);
+	}, []);
+
+	return watchIdRef.current;
+}

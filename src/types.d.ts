@@ -27,7 +27,7 @@ type PlayerData = {
 			userAgreesToShareLocation?: boolean;
 			userAgreesToUseCamera?: boolean;
 			userAgreesToStoreLocalData?: boolean;
-		}
+		};
 	};
 	lastGameState: GameState;
 };
@@ -51,7 +51,7 @@ type GradeAndColor = {
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;
 
-type Coordinates = [number, number];
+type Coordinates = { acc?: number; lat?: number; long?: number };
 type UpdateLocation = (coords: Coordinates) => Coordinates;
 type Items = Array<GameObject>;
 type AddItem = (item: GameObject) => GameResponse;

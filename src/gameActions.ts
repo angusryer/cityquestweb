@@ -3,7 +3,7 @@ import { atom } from "jotai";
 import { v4 as uuid } from "uuid";
 import { signOut, storeGameInDb } from "./firebaseLogic";
 import { LoadType, Screen, EventType } from "./enums";
-import { isConstructorDeclaration } from "typescript";
+import { SetAtom } from "jotai/core/types";
 
 // *** Set up game state atoms (get & set), actions (set) and aggregates (get) here
 export const activePlayerAtom = atom<ActivePlayer | null>(null);
@@ -31,7 +31,7 @@ export const gameLastStartTimeAtom = atom<number>(0);
 export const playerEnergyAtom = atom<number | undefined>(100);
 export const playerAccumulatedEnergyAtom = atom<number | undefined>(0);
 export const playerScoreAtom = atom<number | undefined>(100);
-export const playerLocationAtom = atom<Coordinates | undefined>([0, 0]);
+export const playerLocationAtom = atom<Coordinates | undefined>({});
 export const playerItemsAtom = atom<Array<GameObject> | undefined>([
 	{ id: "1", name: "Museum Hours", type: "Clue" }
 ]);
@@ -109,7 +109,7 @@ export const startNewGameAction = atom(null, (_get, set) => {
 	set(gameStartTimeAtom, Date.now());
 	set(gameLastStartTimeAtom, Date.now());
 	set(gameElapsedTimeAtom, 0);
-	set(playerLocationAtom, [0, 0]);
+	set(playerLocationAtom, {});
 	set(playerEnergyAtom, 100);
 	set(playerAccumulatedEnergyAtom, 0);
 	set(playerScoreAtom, 100);
@@ -159,24 +159,20 @@ export const globalSignOutAction = atom(null, (_get, set) => {
 	signOut();
 });
 
-const getLocationPermissions = async () => {
+export const onPlayerLocationChange = async (
+	setPlayerLocation: SetAtom<Coordinates>
+): Promise<number> => {
 	if (window !== undefined) {
-		await navigator.geolocation.getCurrentPosition(
-			(position) => {
-				// + set permissions
-				// + store position
-				console.log(
-					"navigator.geolocation.getCurrentPosition() ==> ",
-					position
-				);
-			},
-			(err) => {
-				throw new Error(
-					`Cannot play game if cannot know position! ${err.message}`
-				);
-			}
-		);
+		return await navigator.geolocation.watchPosition((position) => {
+			console.log(position.coords);
+			setPlayerLocation({
+				acc: position.coords.accuracy,
+				lat: position.coords.latitude,
+				long: position.coords.longitude
+			});
+		});
 	}
+	return 0;
 };
 
 const getCameraPermissions = async () => {
@@ -191,10 +187,9 @@ const getLocalStoragePermissions = async () => {
 	}
 };
 
-export const playerPermissionsAction = atom(null, async (get, _set) => {
+export const playerPermissionsAction = atom(null, async (get, set) => {
 	const data = get(playerDataAtom);
 	if (!data?.playerData?.permissions) {
-		await getLocationPermissions();
 		await getCameraPermissions();
 		await getLocalStoragePermissions();
 	}
@@ -258,11 +253,6 @@ export function useCachedState() {
 
 	return [cachedGameState, setCachedGameState] as const;
 }
-
-export const getCurrentLocation = (): Coordinates => {
-	// TODO get and return current user location
-	return [43, 78];
-};
 
 //** KEEP SYNC WITH CACHE USING REACT-QUERY */
 

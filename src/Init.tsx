@@ -3,8 +3,7 @@ import { useAtom } from "jotai";
 import { onUserStateChange, onPlayerDataChange } from "./firebaseLogic";
 import {
 	activePlayerAtom,
-	playerDataAtom,
-	playerPermissionsAction
+	playerDataAtom
 } from "./gameActions";
 import ScreenManager from "./screens/ScreenManager";
 import Auth from "./screens/Auth";
@@ -13,7 +12,6 @@ import Splash from "./screens/Splash";
 function Init() {
 	const [activePlayer, setActivePlayer] = useAtom(activePlayerAtom);
 	const [playerData, setPlayerData] = useAtom(playerDataAtom);
-	const [, getPlayerPermissions] = useAtom(playerPermissionsAction);
 
 	const setActivePlayerRef = useRef(setActivePlayer);
 	useEffect(() => {
@@ -26,13 +24,6 @@ function Init() {
 			onPlayerDataChange(activePlayer.playerId, setPlayerDataRef.current);
 		}
 	}, [activePlayer]);
-
-	const getPlayerPermissionsRef = useRef(getPlayerPermissions);
-	useEffect(() => {
-		if (playerData) {
-			getPlayerPermissionsRef.current();
-		}
-	}, [playerData]);
 
 	if (!activePlayer) return <Auth />;
 	if (activePlayer && playerData) return <ScreenManager />;

@@ -3,12 +3,12 @@ import { useAtom } from "jotai";
 import {
 	toggleInGameMenuAtom,
 	toggleDebugMenuAtom,
-	toggleConfigMenuAtom,
 	isLoadingGameOfTypeAtom,
 	gameElapsedTimeAtom,
 	eventTriggeredOfTypeAtom,
 	shouldTimerBePausedAction,
-	shouldTriggerEndGameAction
+	shouldTriggerEndGameAction,
+	playerLocationAtom
 } from "../../gameActions";
 import { LoadType, EventType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
@@ -20,7 +20,11 @@ import EndGame from "../EndGame";
 import DebugMenu from "../DebugMenu";
 import Intro from "../Intro";
 import SvgIcon from "@material-ui/icons/Settings";
-import { useInterval, getElapsedTimeString } from "../../helpers";
+import {
+	useInterval,
+	getElapsedTimeString,
+	useLocationWatcher
+} from "../../helpers";
 import "./Game.scss";
 
 function Game() {
@@ -31,7 +35,7 @@ function Game() {
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
 	const [shouldTriggerEndGame] = useAtom(shouldTriggerEndGameAction);
 	const [shouldTimerBePaused] = useAtom(shouldTimerBePausedAction);
-	const [, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
+	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
 
 	// In-game timer
 	useInterval(
@@ -41,9 +45,11 @@ function Game() {
 		inGameMenu || shouldTimerBePaused ? null : 1000
 	);
 
+	// Watch players location
+	useLocationWatcher(setPlayerLocation);
+
 	const toggleMenu = () => {
 		toggleInGameMenu(!inGameMenu);
-		toggleConfigMenu(false);
 	};
 
 	const toggleDebug = () => {
@@ -65,7 +71,9 @@ function Game() {
 				<Grade />
 			</section>
 			<section className='game__media'></section>
-			<section className='game__info'></section>
+			<section className='game__info'>
+				{playerLocation ? playerLocation?.long : ""}
+			</section>
 			<section className='game__map'></section>
 			<SvgIcon className='base__debug' onClick={toggleDebug} />
 			{debugMenu && <DebugMenu />}

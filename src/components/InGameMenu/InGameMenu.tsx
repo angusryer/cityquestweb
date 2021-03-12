@@ -5,19 +5,16 @@ import { EventType, Screen } from "../../enums";
 import {
 	activePlayerAtom,
 	globalSignOutAction,
-	toggleConfigMenuAtom,
 	saveGameStateAction,
 	activeScreenAtom,
 	gameElapsedTimeAtom,
 	eventTriggeredOfTypeAtom
 } from "../../gameActions";
 import { getElapsedTimeString } from "../../helpers";
-import ConfigMenu from "../ConfigMenu";
 import "./InGameMenu.scss";
 
 const InGameMenu: React.FC = () => {
 	const [message, setMessage] = useState<string>("");
-	const [configMenu, toggleConfigMenu] = useAtom(toggleConfigMenuAtom);
 	const [activePlayer] = useAtom(activePlayerAtom);
 	const [gameElapsedTime] = useAtom(gameElapsedTimeAtom);
 	const [eventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
@@ -42,7 +39,6 @@ const InGameMenu: React.FC = () => {
 
 	return (
 		<div className='ingamemenu'>
-			{configMenu && <ConfigMenu />}
 			<span className='ingamemenu__message'>{message}</span>
 			<span className='ingamemenu__heading'>
 				Current Player: {activePlayer?.playerDisplayName}
@@ -71,13 +67,6 @@ const InGameMenu: React.FC = () => {
 					Save Game
 				</Button>
 			)}
-			<Button
-				variant='dark'
-				onClick={() => toggleConfigMenu(!configMenu)}
-				className='ingamemenu__btn'
-			>
-				Toggle Debug Menu
-			</Button>
 		</div>
 	);
 };
