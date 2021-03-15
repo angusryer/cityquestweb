@@ -1,8 +1,20 @@
 @import "../../globalStyles/mixins";
 
 .menu {
-	&__title {
-		font-weight: 700;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: space-around;
+
+	&__logobox {
+		width: 200px;
+		height: 200px;
+
+		&-logo {
+			height: 100%;
+			width: auto;
+			object-position: center;
+			object-fit: contain;
+		}
 	}
 	&__btn {
 		@include menu_button(200px);

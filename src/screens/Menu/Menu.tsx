@@ -12,6 +12,8 @@ import {
 	playerDataAtom
 } from "../../gameActions";
 import { LoadType, Screen } from "../../enums";
+import mainImage from "./cityQuest-base.png";
+import './Menu.scss';
 
 function Menu() {
 	const [activeScreen, setActiveScreen] = useAtom(activeScreenAtom);
@@ -32,7 +34,9 @@ function Menu() {
 
 	return (
 		<main className='menu'>
-			<h1 className='menu__title'>City Quest</h1>
+			<div className='menu__logobox'>
+				<img src={mainImage} alt='City Quest' className='menu__logobox-logo' />
+			</div>
 			<div>
 				{activeScreen === Screen.MENU && (
 					<Button variant='dark' className='menu__btn' onClick={backToGamePlay}>

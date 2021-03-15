@@ -7,23 +7,24 @@
 		"@material-ui/icons": "^4.11.2",
 		"@testing-library/jest-dom": "^5.11.9",
 		"@testing-library/react": "^11.2.5",
-		"@testing-library/user-event": "^12.7.1",
+		"@testing-library/user-event": "^12.8.3",
 		"@types/jest": "^26.0.20",
-		"@types/react": "^17.0.2",
-		"@types/react-dom": "^17.0.1",
+		"@types/react": "^17.0.3",
+		"@types/react-dom": "^17.0.2",
 		"bootstrap": "^4.6.0",
 		"immer": "^8.0.1",
-		"jotai": "^0.14.4",
+		"jotai": "^0.14.5",
 		"mapbox-gl": "^2.1.1",
 		"react": "^17.0.1",
 		"react-app-rewired": "^2.1.8",
-		"react-bootstrap": "^1.5.0",
+		"react-bootstrap": "^1.5.2",
 		"react-dom": "^17.0.1",
 		"react-scripts": "4.0.2",
-		"typescript": "^4.1.5",
+		"typescript": "^4.2.3",
 		"uuid": "^8.3.2",
-		"web-vitals": "^1.1.0",
-		"workbox-webpack-plugin": "^6.1.1"
+		"web-vitals": "^1.1.1",
+		"workbox-webpack-plugin": "^6.1.1",
+		"worker-loader": "^3.0.8"
 	},
 	"scripts": {
 		"start": "react-app-rewired start",
@@ -51,9 +52,10 @@
 	},
 	"devDependencies": {
 		"@types/firebase": "^3.2.1",
+		"@types/mapbox-gl": "^2.1.0",
 		"@types/material-ui": "^0.21.8",
 		"@types/react-test-renderer": "^17.0.1",
 		"@types/uuid": "^8.3.0",
-		"sass": "^1.32.7"
+		"sass": "^1.32.8"
 	}
 }

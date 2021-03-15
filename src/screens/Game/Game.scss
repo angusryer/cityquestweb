@@ -45,14 +45,16 @@
 		background: slategray;
 	}
 
-	&__map {
+	&__info {
+		grid-row: 3;
 		display: flex;
-		flex-direction: column;
-		align-items: center;
-		&-btn {
-			border: none;
-			border-radius: 100px;
-			width: 12rem;
-		}
+		flex-flow: column;
+	}
+
+	&__map {
+		grid-row: 4;
+		position: relative;
+		height: 100%;
+		width: 100%;
 	}
 }

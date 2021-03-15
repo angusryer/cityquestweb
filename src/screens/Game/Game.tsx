@@ -7,24 +7,20 @@ import {
 	gameElapsedTimeAtom,
 	eventTriggeredOfTypeAtom,
 	shouldTimerBePausedAction,
-	shouldTriggerEndGameAction,
-	playerLocationAtom
+	shouldTriggerEndGameAction
 } from "../../gameActions";
 import { LoadType, EventType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
 import EnergyLevel from "../../components/EnergyLevel";
 import Grade from "../../components/Grade";
+import Map from "../../components/Map";
 import LevelUp from "../LevelUp";
 import WinGame from "../WinGame";
 import EndGame from "../EndGame";
 import DebugMenu from "../DebugMenu";
 import Intro from "../Intro";
 import SvgIcon from "@material-ui/icons/Settings";
-import {
-	useInterval,
-	getElapsedTimeString,
-	useLocationWatcher
-} from "../../helpers";
+import { useInterval, getElapsedTimeString } from "../../helpers";
 import "./Game.scss";
 
 function Game() {
@@ -35,7 +31,6 @@ function Game() {
 	const [gameElapsedTime, setGameElapsedTime] = useAtom(gameElapsedTimeAtom);
 	const [shouldTriggerEndGame] = useAtom(shouldTriggerEndGameAction);
 	const [shouldTimerBePaused] = useAtom(shouldTimerBePausedAction);
-	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
 
 	// In-game timer
 	useInterval(
@@ -44,9 +39,6 @@ function Game() {
 		},
 		inGameMenu || shouldTimerBePaused ? null : 1000
 	);
-
-	// Watch players location
-	useLocationWatcher(setPlayerLocation);
 
 	const toggleMenu = () => {
 		toggleInGameMenu(!inGameMenu);
@@ -71,10 +63,10 @@ function Game() {
 				<Grade />
 			</section>
 			<section className='game__media'></section>
-			<section className='game__info'>
-				{playerLocation ? playerLocation?.long : ""}
+			<section className='game__info'></section>
+			<section className='game__map'>
+				<Map />
 			</section>
-			<section className='game__map'></section>
 			<SvgIcon className='base__debug' onClick={toggleDebug} />
 			{debugMenu && <DebugMenu />}
 		</main>
