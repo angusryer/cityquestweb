@@ -1,29 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.4a6ad10b.chunk.css",
-    "main.js": "/static/js/main.fdbdaf55.chunk.js",
-    "main.js.map": "/static/js/main.fdbdaf55.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.ec5e2ade.js",
-    "runtime-main.js.map": "/static/js/runtime-main.ec5e2ade.js.map",
-    "static/css/2.bdb85385.chunk.css": "/static/css/2.bdb85385.chunk.css",
-    "static/js/2.e3805b4d.chunk.js": "/static/js/2.e3805b4d.chunk.js",
-    "static/js/2.e3805b4d.chunk.js.map": "/static/js/2.e3805b4d.chunk.js.map",
-    "static/js/3.984e62dd.chunk.js": "/static/js/3.984e62dd.chunk.js",
-    "static/js/3.984e62dd.chunk.js.map": "/static/js/3.984e62dd.chunk.js.map",
+    "main.css": "/static/css/main.f8185a94.chunk.css",
+    "main.js": "/static/js/main.24e830ae.chunk.js",
+    "main.js.map": "/static/js/main.24e830ae.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.7392ed1e.js",
+    "runtime-main.js.map": "/static/js/runtime-main.7392ed1e.js.map",
+    "static/js/2.d3eaa13a.chunk.js": "/static/js/2.d3eaa13a.chunk.js",
+    "static/js/2.d3eaa13a.chunk.js.map": "/static/js/2.d3eaa13a.chunk.js.map",
+    "static/js/3.85bd15fa.chunk.js": "/static/js/3.85bd15fa.chunk.js",
+    "static/js/3.85bd15fa.chunk.js.map": "/static/js/3.85bd15fa.chunk.js.map",
     "index.html": "/index.html",
     "service-worker.js": "/service-worker.js",
     "service-worker.js.map": "/service-worker.js.map",
-    "static/css/2.bdb85385.chunk.css.map": "/static/css/2.bdb85385.chunk.css.map",
-    "static/css/main.4a6ad10b.chunk.css.map": "/static/css/main.4a6ad10b.chunk.css.map",
-    "static/js/2.e3805b4d.chunk.js.LICENSE.txt": "/static/js/2.e3805b4d.chunk.js.LICENSE.txt",
+    "static/css/main.f8185a94.chunk.css.map": "/static/css/main.f8185a94.chunk.css.map",
+    "static/js/2.d3eaa13a.chunk.js.LICENSE.txt": "/static/js/2.d3eaa13a.chunk.js.LICENSE.txt",
     "static/media/base.scss": "/static/media/SyneMono-Regular.8338a3dd.ttf",
     "static/media/cityQuest-base.e396cfcb.png": "/static/media/cityQuest-base.e396cfcb.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.ec5e2ade.js",
-    "static/css/2.bdb85385.chunk.css",
-    "static/js/2.e3805b4d.chunk.js",
-    "static/css/main.4a6ad10b.chunk.css",
-    "static/js/main.fdbdaf55.chunk.js"
+    "static/js/runtime-main.7392ed1e.js",
+    "static/js/2.d3eaa13a.chunk.js",
+    "static/css/main.f8185a94.chunk.css",
+    "static/js/main.24e830ae.chunk.js"
   ]
 }

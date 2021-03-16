@@ -1,10 +1,11 @@
 @import '../../globalStyles/mixins';
 
 .splash {
-	&__spinnergrp {
-		flex-direction: row;
-		&-spinner {
-			margin: auto 4px;
-		}
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	&__logo {
+		width: 80px;
+		height: 80px;
 	}
 }

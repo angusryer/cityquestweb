@@ -1,14 +1,12 @@
 import React from "react";
-import Spinner from "react-bootstrap/Spinner";
+import SplashSvg from "./SplashSvg";
 import "./Splash.scss";
 
 const Splash = () => {
 	return (
 		<main className='splash'>
-			<div className='splash__spinnergrp'>
-				<Spinner animation='grow' className='splash__spinnergrp-spinner' />
-				<Spinner animation='grow' className='splash__spinnergrp-spinner' />
-				<Spinner animation='grow' className='splash__spinnergrp-spinner' />
+			<div className='splash__logo'>
+				<SplashSvg />
 			</div>
 		</main>
 	);

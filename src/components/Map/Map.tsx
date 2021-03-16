@@ -1,37 +1,37 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAtom } from "jotai";
+import { Loader } from "@googlemaps/js-api-loader";
 import { playerLocationAtom } from "../../gameActions";
 import { useLocationWatcher } from "../../helpers";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-// eslint-disable-next-line import/no-webpack-loader-syntax
-// import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
+import { rgbToHex } from "@material-ui/core";
 
-// mapboxgl. = MapboxWorker;
-mapboxgl.accessToken =
-	"pk.eyJ1IjoiYW5ndXNyeWVyIiwiYSI6ImNrbTZ0MTFtczByZmgyd3Fzc2FsdzBxa2gifQ.Ut7GNNPcjAyyCWR0NP8LXA";
+const loader = new Loader({
+	apiKey: process.env.REACT_APP_GOOGLEMAPSKEY || "",
+	version: "beta"
+});
 
 function Map() {
 	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
-	const mapContainerRef = useRef<any>("");
-	const [zoom, setZoom] = useState(15);
 
 	// Watch players location
 	useLocationWatcher(setPlayerLocation);
 
 	useEffect(() => {
-		const map = new mapboxgl.Map({
-			container: mapContainerRef.current,
-			style: "mapbox://styles/mapbox/dark-v10",
-			center: [playerLocation?.long || 0, playerLocation?.lat || 0],
-			zoom: zoom
+		loader.load().then(() => {
+			new google.maps.Map(document.getElementById("map") as HTMLElement, {
+				center: {
+					lat: playerLocation?.lat || 0,
+					lng: playerLocation?.long || 0
+				},
+				zoom: 12,
+                disableDefaultUI: true,
+			});
 		});
-
-		return () => map.remove();
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<div
+			id='map'
 			style={{
 				position: "absolute",
 				top: 0,
@@ -39,7 +39,6 @@ function Map() {
 				left: 0,
 				right: 0
 			}}
-			ref={mapContainerRef}
 		/>
 	);
 }
