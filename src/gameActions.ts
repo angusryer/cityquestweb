@@ -32,6 +32,7 @@ export const playerEnergyAtom = atom<number | undefined>(100);
 export const playerAccumulatedEnergyAtom = atom<number | undefined>(0);
 export const playerScoreAtom = atom<number | undefined>(100);
 export const playerLocationAtom = atom<Coordinates | undefined>({});
+export const mapStateAtom = atom<MapState>({});
 export const playerItemsAtom = atom<Array<GameObject> | undefined>([
 	{ id: "1", name: "Museum Hours", type: "Clue" }
 ]);

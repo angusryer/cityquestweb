@@ -49,6 +49,25 @@ type GradeAndColor = {
 	color: string;
 };
 
+type MapState = {
+	altitude?: number;
+	bearing?: number;
+	height?: number;
+	latitude?: number;
+	longitude?: number;
+	maxPitch?: number;
+	maxZoom?: number;
+	minPitch?: number;
+	minZoom?: number;
+	pitch?: number;
+	transitionDuration?: number;
+	transitionEasing?: function;
+	transitionInterpolator?: any;
+	transitionInterruption?: number;
+	width?: number;
+	zoom?: number;
+};
+
 type Hookback<T> = Dispatch<SetStateAction<T>>;
 
 type Coordinates = { acc?: number; lat?: number; long?: number };

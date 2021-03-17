@@ -1,7 +1,7 @@
 @import "../../globalStyles/mixins";
 
 .debugmenu {
-	@include modal_background(0.3);
+	@include modal_background(0.5);
 	position: absolute;
 	max-height: 40%;
 	bottom: 0;

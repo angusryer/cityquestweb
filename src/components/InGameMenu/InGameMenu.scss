@@ -2,6 +2,7 @@
 
 .ingamemenu {
 	@include modal_background;
+	z-index: 5;
 
 	&__message {
 		position: absolute;

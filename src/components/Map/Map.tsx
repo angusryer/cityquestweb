@@ -1,45 +1,41 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAtom } from "jotai";
-import { Loader } from "@googlemaps/js-api-loader";
-import { playerLocationAtom } from "../../gameActions";
+import ReactMapGL, { Marker } from "react-map-gl";
+import { playerLocationAtom, mapStateAtom } from "../../gameActions";
 import { useLocationWatcher } from "../../helpers";
-import { rgbToHex } from "@material-ui/core";
-
-const loader = new Loader({
-	apiKey: process.env.REACT_APP_GOOGLEMAPSKEY || "",
-	version: "beta"
-});
+import "mapbox-gl/dist/mapbox-gl.css";
 
 function Map() {
 	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
+	const [mapState, setMapState] = useAtom(mapStateAtom);
 
 	// Watch players location
 	useLocationWatcher(setPlayerLocation);
 
-	useEffect(() => {
-		loader.load().then(() => {
-			new google.maps.Map(document.getElementById("map") as HTMLElement, {
-				center: {
-					lat: playerLocation?.lat || 0,
-					lng: playerLocation?.long || 0
-				},
-				zoom: 12,
-                disableDefaultUI: true,
-			});
+	const updateViewport = (viewData: MapState) => {
+		setMapState({
+			...mapState,
+			zoom: viewData.zoom,
+			latitude: viewData.latitude,
+			longitude: viewData.longitude
 		});
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+	};
 
 	return (
-		<div
-			id='map'
-			style={{
-				position: "absolute",
-				top: 0,
-				bottom: 0,
-				left: 0,
-				right: 0
-			}}
-		/>
+		<ReactMapGL
+			mapboxApiAccessToken={process.env.REACT_APP_MAPBOXGLPKEY}
+			width='100%'
+			height='100%'
+			latitude={!mapState.latitude ? playerLocation?.lat : mapState.latitude}
+			longitude={!mapState.longitude ? playerLocation?.long : mapState.longitude}
+			zoom={mapState.zoom || 13}
+			className='map'
+			mapStyle='mapbox://styles/angusryer/ckmcrch8f400h17p073l6808w'
+			attributionControl={false}
+			onViewportChange={(viewData: MapState) => updateViewport(viewData)}
+		>
+			<Marker key={1} latitude={playerLocation?.lat || 0} longitude={playerLocation?.long || 0}>🤺</Marker>
+		</ReactMapGL>
 	);
 }
 
