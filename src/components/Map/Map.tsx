@@ -7,8 +7,12 @@ import {
 	gameLocationsAtom
 } from "../../gameActions";
 import { useLocationWatcher } from "../../helpers";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { getGameLocations } from "../../firebaseLogic";
+import "mapbox-gl/dist/mapbox-gl.css";
+
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 function Map() {
 	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
