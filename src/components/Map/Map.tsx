@@ -41,7 +41,7 @@ function Map() {
 				!mapState.longitude ? playerLocation?.long : mapState.longitude
 			}
 			zoom={mapState.zoom || 13}
-			className='map'
+			// className='map'
 			mapStyle='mapbox://styles/angusryer/ckmcrch8f400h17p073l6808w'
 			attributionControl={false}
 			onViewportChange={(viewData: MapState) => updateViewport(viewData)}
