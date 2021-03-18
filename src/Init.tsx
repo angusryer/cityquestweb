@@ -3,7 +3,8 @@ import { useAtom } from "jotai";
 import { onUserStateChange, onPlayerDataChange } from "./firebaseLogic";
 import {
 	activePlayerAtom,
-	playerDataAtom
+	playerDataAtom,
+	useCachedState
 } from "./gameActions";
 import ScreenManager from "./screens/ScreenManager";
 import Auth from "./screens/Auth";

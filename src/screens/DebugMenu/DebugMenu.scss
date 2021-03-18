@@ -2,41 +2,43 @@
 
 .debugmenu {
 	@include modal_background(0.5);
-	position: absolute;
-	max-height: 40%;
+	max-height: 30%;
 	bottom: 0;
-	width: 100%;
 	z-index: 100;
-	display: flex;
-	flex-flow: column;
 	padding-top: 10px;
 
-	&__info {
+	&__ul {
+		height: 100%;
 		overflow-y: scroll;
-		&-ul {
-			height: 100%;
-			overflow-y: scroll;
-			margin-top: 5px;
+		margin: 5px 0 0 0;
+		padding: 0 10px;
+		&::-webkit-scrollbar {
+			width: 5px;
 		}
 
 		&-li {
-			line-height: 1.4;
-			font-size: 0.9rem;
+			list-style-type: none;
+			line-height: 1.2;
+			font-size: 0.75rem;
 			margin-bottom: 6px;
 		}
 	}
 
 	&__controls {
-        overflow-x: scroll;
-        height: 100px;
-        width: calc(100% - 42px);
-        display: flex;
-        flex-flow: row nowrap;
-        margin-right: auto;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		height: 60px;
+		width: calc(100% - 44px);
+		display: flex;
+		flex-flow: row nowrap;
+		margin-right: auto;
+		&::-webkit-scrollbar {
+			height: 5px;
+		}
 		&-btn {
 			padding: 1px !important;
 			margin: 2px;
-            min-width: 36px;
+			min-width: 36px;
 			max-width: 36px;
 			min-height: 36px;
 			max-height: 36px;

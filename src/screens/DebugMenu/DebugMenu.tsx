@@ -1,4 +1,5 @@
 import { useAtom } from "jotai";
+import { v4 as uuid } from "uuid";
 import Button from "react-bootstrap/Button";
 import {
 	accumulatedEnergyAction,
@@ -10,10 +11,15 @@ import {
 	playerDataAtom
 } from "../../gameActions";
 import { EventType } from "../../enums";
-import { flatten } from "../../helpers";
+import { flatten, useHorizontalScroll } from "../../helpers";
 import "./DebugMenu.scss";
 
 const debugControlsBtnClass = "debugmenu__controls-btn";
+
+type FunctionObject = {
+	name: string;
+	func: () => void;
+};
 
 const DebugMenu = () => {
 	const [, setEventTriggeredOfType] = useAtom(eventTriggeredOfTypeAtom);
@@ -25,133 +31,109 @@ const DebugMenu = () => {
 	const [accumulatedEnergy, modifyAccumulatedEnergy] = useAtom(
 		accumulatedEnergyAction
 	);
+	const scrollRef = useHorizontalScroll();
 
 	const listedProperties = (obj: any) => {
 		const entries = flatten(obj);
-		const elements = Object.entries(entries).map(([key, value], i) => {
+		const elements = Object.entries(entries).map(([key, value]) => {
 			return (
-				<li key={i} className='debugmenu__info-li'>{`${key} ==> ${value}`}</li>
+				<li
+					key={uuid()}
+					className='debugmenu__ul-li'
+				>{`${key} ==> ${value}`}</li>
 			);
 		});
 		return elements;
 	};
 
-	const energyUp = () => {
-		modifyAccumulatedEnergy(10);
-	};
+	const functionList: Array<FunctionObject> = [
+		{
+			name: "e+",
+			func: () => {
+				modifyAccumulatedEnergy(10);
+			}
+		},
+		{
+			name: "e-",
+			func: () => {
+				modifyAccumulatedEnergy(-10);
+			}
+		},
+		{
+			name: "eres",
+			func: () => {
+				modifyAccumulatedEnergy(-(accumulatedEnergy || 0));
+			}
+		},
 
-	const energyDown = () => {
-		modifyAccumulatedEnergy(-10);
-	};
+		{
+			name: "t+",
+			func: () => {
+				modifyMissionTime((missionTime || 0) + 10);
+			}
+		},
 
-	const resetAccumulatedEnergy = () => {
-		modifyAccumulatedEnergy(-(accumulatedEnergy || 0));
-		console.log(accumulatedEnergy);
-	};
+		{
+			name: "t-",
+			func: () => {
+				modifyMissionTime((missionTime || 0) - 10);
+			}
+		},
 
-	const timeUp = () => {
-		modifyMissionTime((missionTime || 0) + 10);
-		console.log(missionTime);
-	};
+		{
+			name: "tres",
+			func: () => {
+				setElapsedTime(0);
+			}
+		},
 
-	const timeDown = () => {
-		modifyMissionTime((missionTime || 0) - 10);
-		console.log(missionTime);
-	};
+		{
+			name: "l+",
+			func: () => {
+				setEventTriggeredOfType(EventType.LEVEL_UP);
+			}
+		},
 
-	const resetElapsed = () => {
-		setElapsedTime(0);
-		console.log(missionTime);
-	};
+		{
+			name: "l-",
+			func: () => {
+				setEventTriggeredOfType(EventType.LEVEL_DOWN);
+			}
+		},
 
-	const lvlUp = () => {
-		setEventTriggeredOfType(EventType.LEVEL_UP);
-	};
+		{
+			name: "win",
+			func: () => {
+				setEventTriggeredOfType(EventType.WIN_GAME);
+			}
+		},
 
-	const lvlDn = () => {
-		setEventTriggeredOfType(EventType.LEVEL_DOWN);
-	};
-
-	const win = () => {
-		setEventTriggeredOfType(EventType.WIN_GAME);
-	};
-
-	const lose = () => {
-		setEventTriggeredOfType(EventType.END_GAME);
-	};
+		{
+			name: "lose",
+			func: () => {
+				setEventTriggeredOfType(EventType.END_GAME);
+			}
+		}
+	];
 
 	return (
 		<div className='debugmenu'>
-			<div className='debugmenu__info'>
-				<ul className='debugmenu__info-ul'>
-					{listedProperties(activePlayer)}
-					{listedProperties(playerData)}
-					{listedProperties(gameState)}
-				</ul>
-			</div>
-			<div className='debugmenu__controls'>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={energyUp}
-				>
-					+e
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={energyDown}
-				>
-					-e
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={resetAccumulatedEnergy}
-				>
-					eReset
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={timeUp}
-				>
-					+mt
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={timeDown}
-				>
-					-mt
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={resetElapsed}
-				>
-					etReset
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={lvlUp}
-				>
-					LvlUp
-				</Button>
-				<Button
-					variant='dark'
-					className={debugControlsBtnClass}
-					onClick={lvlDn}
-				>
-					LvlDn
-				</Button>
-				<Button variant='dark' className={debugControlsBtnClass} onClick={win}>
-					Win
-				</Button>
-				<Button variant='dark' className={debugControlsBtnClass} onClick={lose}>
-					Lose
-				</Button>
+			<ul className='debugmenu__ul'>
+				{listedProperties(activePlayer)}
+				{listedProperties(playerData)}
+				{listedProperties(gameState)}
+			</ul>
+			<div className='debugmenu__controls' ref={scrollRef}>
+				{functionList.map((functionObj: FunctionObject) => (
+					<Button
+						key={uuid()}
+						variant='dark'
+						className={debugControlsBtnClass}
+						onClick={functionObj.func}
+					>
+						{functionObj.name}
+					</Button>
+				))}
 			</div>
 		</div>
 	);

@@ -68,6 +68,11 @@ type MapState = {
 	zoom?: number;
 };
 
+type GameLocations = Array<{
+	name?: string;
+	location?: Array;
+}>;
+
 type Hookback<T> = Dispatch<SetStateAction<T>>;
 
 type Coordinates = { acc?: number; lat?: number; long?: number };

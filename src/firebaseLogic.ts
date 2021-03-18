@@ -1,3 +1,4 @@
+import { LocationSearching } from "@material-ui/icons";
 import { firebase, auth, db } from "./firebaseConfig";
 
 //** Firebase Auth Operations */
@@ -103,4 +104,17 @@ export const storeGameInDb = async (
 		.update({
 			lastGameState: { ...gameStateObject }
 		});
+};
+
+export const getGameLocations = async () => {
+	let locations: Array<any> = [];
+	await db
+		.collection("locations")
+		.get()
+		.then((snapshot) => {
+			snapshot.forEach((doc) => {
+				locations.push(doc.data());
+			});
+		});
+	return locations;
 };

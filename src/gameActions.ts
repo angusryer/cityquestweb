@@ -37,6 +37,7 @@ export const playerItemsAtom = atom<Array<GameObject> | undefined>([
 	{ id: "1", name: "Museum Hours", type: "Clue" }
 ]);
 export const missionTimeAtom = atom<number>(60);
+export const gameLocationsAtom = atom<GameLocations>([]);
 
 //** Must keep these updated as Screen Routing Atoms are added */
 const resetDefaultGameState = atom(null, (get, set) => {

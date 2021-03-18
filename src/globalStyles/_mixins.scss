@@ -14,4 +14,8 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	overflow: hidden;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
