@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useAtom } from "jotai";
 import ReactMapGL, { Marker } from "react-map-gl";
 import {
@@ -33,7 +33,7 @@ function Map() {
 
 	return (
 		<ReactMapGL
-			mapboxApiAccessToken="pk.eyJ1IjoiYW5ndXNyeWVyIiwiYSI6ImNrbWNxd2l6ODBmaGoyc244OGN5dm44eWMifQ.gDGwyyA3SvwI_f2ZkYr_uA"
+			mapboxApiAccessToken={process.env.REACT_APP_MBK}
 			width='100%'
 			height='100%'
 			latitude={!mapState.latitude ? playerLocation?.lat : mapState.latitude}
@@ -41,8 +41,8 @@ function Map() {
 				!mapState.longitude ? playerLocation?.long : mapState.longitude
 			}
 			zoom={mapState.zoom || 13}
-			// className='map'
-			mapStyle='mapbox://styles/angusryer/ckmcrch8f400h17p073l6808w'
+			className='map'
+			mapStyle={process.env.REACT_APP_MBS}
 			attributionControl={false}
 			onViewportChange={(viewData: MapState) => updateViewport(viewData)}
 		>
