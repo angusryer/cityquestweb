@@ -33,20 +33,18 @@ function Map() {
 
 	return (
 		<ReactMapGL
-			mapboxApiAccessToken="pk.eyJ1IjoiYW5ndXNyeWVyIiwiYSI6ImNrbWNxd2l6ODBmaGoyc244OGN5dm44eWMifQ.gDGwyyA3SvwI_f2ZkYr_uA" // {process.env.REACT_APP_MBK}
+			mapboxApiAccessToken='pk.eyJ1IjoiYW5ndXNyeWVyIiwiYSI6ImNrbWNxd2l6ODBmaGoyc244OGN5dm44eWMifQ.gDGwyyA3SvwI_f2ZkYr_uA' // {process.env.REACT_APP_MBK}
 			width='100%'
 			height='100%'
-			latitude={44}
-			longitude={-77}
-			// latitude={!mapState.latitude ? playerLocation?.lat : mapState.latitude}
-			// longitude={
-			// 	!mapState.longitude ? playerLocation?.long : mapState.longitude
-			// }
-			// zoom={mapState.zoom || 13}
-			// className='map'
-			// mapStyle="mapbox://styles/angusryer/ckmcrch8f400h17p073l6808w" // {process.env.REACT_APP_MBS}
-			// attributionControl={false}
-			// onViewportChange={(viewData: MapState) => updateViewport(viewData)}
+			latitude={!mapState.latitude ? playerLocation?.lat : mapState.latitude}
+			longitude={
+				!mapState.longitude ? playerLocation?.long : mapState.longitude
+			}
+			zoom={mapState.zoom || 13}
+			className='map'
+			mapStyle='mapbox://styles/angusryer/ckmcrch8f400h17p073l6808w' // {process.env.REACT_APP_MBS}
+			attributionControl={false}
+			onViewportChange={(viewData: MapState) => updateViewport(viewData)}
 		>
 			<Marker
 				key={1}
