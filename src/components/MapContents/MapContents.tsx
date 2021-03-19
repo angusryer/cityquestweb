@@ -1,7 +1,13 @@
 import React, { useCallback, useEffect } from "react";
 import { useAtom } from "jotai";
-import { TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { v4 as uuid } from "uuid";
+import { TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
+import {
+	LatLngBoundsExpression,
+	LatLngExpression,
+	LatLngBoundsLiteral,
+	Point
+} from "leaflet";
 import {
 	playerLocationAtom,
 	mapStateAtom,
@@ -10,12 +16,6 @@ import {
 import { useLocationWatcher } from "../../helpers";
 import { getGameLocations } from "../../firebaseLogic";
 import "./MapContents.scss";
-import {
-	LatLngBoundsExpression,
-	LatLngExpression,
-	LatLngBoundsLiteral,
-	Point
-} from "leaflet";
 
 function MapContents() {
 	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
@@ -75,6 +75,3 @@ function MapContents() {
 }
 
 export default React.memo(MapContents);
-
-// 44.4828059
-// -77.682261
