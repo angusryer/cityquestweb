@@ -12,7 +12,7 @@
 
 		&-icon {
 			position: absolute;
-			z-index: 20;
+			z-index: 2000;
 			top: 10px;
 			right: 10px;
 		}
@@ -57,4 +57,19 @@
 		height: 100%;
 		width: 100%;
 	}
+}
+
+#map {
+	position: absolute;
+	top: 0 !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+}
+
+.leaflet-bottom,
+.leaflet-top {
+	z-index: -1 !important; // This is 1000 by default
+	position: absolute;
+	pointer-events: none;
 }

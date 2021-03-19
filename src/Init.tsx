@@ -1,11 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import { onUserStateChange, onPlayerDataChange } from "./firebaseLogic";
-import {
-	activePlayerAtom,
-	playerDataAtom,
-	useCachedState
-} from "./gameActions";
+import { activePlayerAtom, playerDataAtom } from "./gameActions";
 import ScreenManager from "./screens/ScreenManager";
 import Auth from "./screens/Auth";
 import Splash from "./screens/Splash";

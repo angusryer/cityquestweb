@@ -106,7 +106,7 @@ export const storeGameInDb = async (
 		});
 };
 
-export const getGameLocations = async () => {
+export const getGameLocations = async (callback: Hookback<GameLocations>) => {
 	let locations: Array<any> = [];
 	await db
 		.collection("locations")
@@ -116,5 +116,5 @@ export const getGameLocations = async () => {
 				locations.push(doc.data());
 			});
 		});
-	return locations;
+	callback(locations);
 };

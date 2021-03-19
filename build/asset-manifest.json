@@ -1,31 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.15bc7a4d.chunk.css",
-    "main.js": "/static/js/main.75429e4b.chunk.js",
-    "main.js.map": "/static/js/main.75429e4b.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.8b5bc3cf.js",
-    "runtime-main.js.map": "/static/js/runtime-main.8b5bc3cf.js.map",
-    "static/css/2.bdb85385.chunk.css": "/static/css/2.bdb85385.chunk.css",
-    "static/js/2.5ebe3878.chunk.js": "/static/js/2.5ebe3878.chunk.js",
-    "static/js/2.5ebe3878.chunk.js.map": "/static/js/2.5ebe3878.chunk.js.map",
-    "static/js/3.cb1d38b6.chunk.js": "/static/js/3.cb1d38b6.chunk.js",
-    "static/js/3.cb1d38b6.chunk.js.map": "/static/js/3.cb1d38b6.chunk.js.map",
+    "main.css": "/static/css/main.b4903b74.chunk.css",
+    "main.js": "/static/js/main.761d2420.chunk.js",
+    "main.js.map": "/static/js/main.761d2420.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.f36e4457.js",
+    "runtime-main.js.map": "/static/js/runtime-main.f36e4457.js.map",
+    "static/js/2.b04583da.chunk.js": "/static/js/2.b04583da.chunk.js",
+    "static/js/2.b04583da.chunk.js.map": "/static/js/2.b04583da.chunk.js.map",
+    "static/js/3.3abbb564.chunk.js": "/static/js/3.3abbb564.chunk.js",
+    "static/js/3.3abbb564.chunk.js.map": "/static/js/3.3abbb564.chunk.js.map",
     "index.html": "/index.html",
     "service-worker.js": "/service-worker.js",
     "service-worker.js.map": "/service-worker.js.map",
-    "static/css/2.bdb85385.chunk.css.map": "/static/css/2.bdb85385.chunk.css.map",
-    "static/css/main.15bc7a4d.chunk.css.map": "/static/css/main.15bc7a4d.chunk.css.map",
-    "static/js/2.5ebe3878.chunk.js.LICENSE.txt": "/static/js/2.5ebe3878.chunk.js.LICENSE.txt",
-    "static/js/mapbox-gl-csp-worker.dc678a12.worker.js": "/static/js/mapbox-gl-csp-worker.dc678a12.worker.js",
-    "static/js/mapbox-gl-csp-worker.dc678a12.worker.js.map": "/static/js/mapbox-gl-csp-worker.dc678a12.worker.js.map",
+    "static/css/main.b4903b74.chunk.css.map": "/static/css/main.b4903b74.chunk.css.map",
+    "static/js/2.b04583da.chunk.js.LICENSE.txt": "/static/js/2.b04583da.chunk.js.LICENSE.txt",
     "static/media/base.scss": "/static/media/SyneMono-Regular.8338a3dd.ttf",
     "static/media/cityQuest-base.e396cfcb.png": "/static/media/cityQuest-base.e396cfcb.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.8b5bc3cf.js",
-    "static/css/2.bdb85385.chunk.css",
-    "static/js/2.5ebe3878.chunk.js",
-    "static/css/main.15bc7a4d.chunk.css",
-    "static/js/main.75429e4b.chunk.js"
+    "static/js/runtime-main.f36e4457.js",
+    "static/js/2.b04583da.chunk.js",
+    "static/css/main.b4903b74.chunk.css",
+    "static/js/main.761d2420.chunk.js"
   ]
 }
