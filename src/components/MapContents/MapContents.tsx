@@ -6,7 +6,8 @@ import {
 	LatLngBoundsExpression,
 	LatLngExpression,
 	LatLngBoundsLiteral,
-	Point
+	Point,
+	latLngBounds
 } from "leaflet";
 import {
 	playerLocationAtom,
@@ -16,6 +17,7 @@ import {
 import { useLocationWatcher } from "../../helpers";
 import { getGameLocations } from "../../firebaseLogic";
 import "./MapContents.scss";
+import { makeHull, getAntiPodalPair, PointArray } from "../../mapFunctions";
 
 function MapContents() {
 	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
@@ -28,12 +30,27 @@ function MapContents() {
 		}
 	});
 
-	const getLargestDistance = useCallback((): LatLngBoundsExpression => {
+	const getBoundingBox = useCallback((): LatLngBoundsExpression => {
+		if (gameLocations.length !== 0) {
+			let gameLocationsArray = gameLocations.map((loc) => {
+				return [loc.location[0], loc.location[1]];
+			});
+			gameLocationsArray.push([
+				playerLocation?.lat || 0,
+				playerLocation?.long || 0
+			]);
+			const hull = makeHull(gameLocationsArray as PointArray[]);
+			// TODO for fun: implement anti podal point calc myself
+			const antiPodalPair = latLngBounds(hull);
+			// const antiPodalPair = getAntiPodalPair(hull) as LatLngBoundsLiteral;
+			// console.log(antiPodalPair);
+			return antiPodalPair;
+		}
 		return [
 			[playerLocation?.lat || 0, playerLocation?.long || 0],
-			[44.4828059, -77.682261]
+			[playerLocation?.lat || 0, playerLocation?.long || 0]
 		] as LatLngBoundsLiteral;
-	}, [playerLocation]);
+	}, [playerLocation, gameLocations]);
 
 	// Watch players location
 	useLocationWatcher(setPlayerLocation);
@@ -43,15 +60,15 @@ function MapContents() {
 	}, [setGameLocations]);
 
 	useEffect(() => {
-		mapContext.setView([
-			playerLocation?.lat || 0,
-			playerLocation?.long || 0
-		] as LatLngExpression);
+		// mapContext.setView([
+		// 	playerLocation?.lat || 0,
+		// 	playerLocation?.long || 0
+		// ] as LatLngExpression);
 		if (gameLocations) {
-			const largestDistance: LatLngBoundsExpression = getLargestDistance();
-			mapContext.fitBounds(largestDistance, { padding: new Point(20, 20) });
+			const boundingBox: LatLngBoundsExpression = getBoundingBox();
+			mapContext.fitBounds(boundingBox, { padding: new Point(0.1, 0.1) });
 		}
-	}, [playerLocation, mapContext, gameLocations, getLargestDistance]);
+	}, [playerLocation, mapContext, gameLocations, getBoundingBox]);
 
 	return (
 		<>
