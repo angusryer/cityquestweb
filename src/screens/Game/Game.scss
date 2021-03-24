@@ -59,17 +59,10 @@
 	}
 }
 
-#map {
+#gamemap {
 	position: absolute;
 	top: 0 !important;
 	bottom: 0 !important;
 	left: 0 !important;
 	right: 0 !important;
-}
-
-.leaflet-bottom,
-.leaflet-top {
-	z-index: -1 !important; // This is 1000 by default
-	position: absolute;
-	pointer-events: none;
 }

@@ -71,10 +71,13 @@ type MapState = {
 type GameLocations = Array<{
 	name?: string;
 	location?: Array;
+	type?: string;
 }>;
 
 type Hookback<T> = Dispatch<SetStateAction<T>>;
 
+type BoundsExpression = [[number, number], [number, number]];
+type LocationTuple = [number, number];
 type Coordinates = { acc?: number; lat?: number; long?: number };
 type UpdateLocation = (coords: Coordinates) => Coordinates;
 type Items = Array<GameObject>;

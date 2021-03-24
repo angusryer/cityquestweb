@@ -13,8 +13,7 @@ import { LoadType, EventType } from "../../enums";
 import InGameMenu from "../../components/InGameMenu";
 import EnergyLevel from "../../components/EnergyLevel";
 import Grade from "../../components/Grade";
-import { MapContainer } from "react-leaflet";
-import MapContents from "../../components/MapContents";
+import GameMap from "../../components/GameMap";
 import LevelUp from "../LevelUp";
 import WinGame from "../WinGame";
 import EndGame from "../EndGame";
@@ -66,9 +65,9 @@ function Game() {
 			<section className='game__media'></section>
 			<section className='game__info'></section>
 			<section className='game__map'>
-				<MapContainer id='map' center={[0, 0]} zoom={12}>
-					<MapContents />
-				</MapContainer>
+				<div id='gamemap'>
+					<GameMap />
+				</div>
 			</section>
 			<SvgIcon className='base__debug' onClick={toggleDebug} />
 			{debugMenu && <DebugMenu />}
