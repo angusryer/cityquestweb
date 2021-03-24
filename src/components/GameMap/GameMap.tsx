@@ -41,6 +41,7 @@ export default function Map(): JSX.Element {
 		getGameLocations(setGameLocations);
 	}, [setGameLocations]);
 
+	// TODO memoize the result of getBoundsExpression
 	//** Remember to return LONG, LAT instead of LAT, LONG for the BoundsExpression */
 	const getBoundsExpression = (): BoundsExpression => {
 		let gameLocationsArray: Array<LocationTuple> = [
@@ -72,9 +73,10 @@ export default function Map(): JSX.Element {
 	// set up bounding box
 	useEffect(() => {
 		const boundsExpression: BoundsExpression = getBoundsExpression();
+		// TODO if memoized result of boundsExpression is the same as previous, skip this
 		const { longitude, latitude, zoom } = new WebMercatorViewport(
 			viewport
-		).fitBounds(boundsExpression);
+		).fitBounds(boundsExpression, { padding: 10 });
 		if (viewport.latitude !== latitude || viewport.longitude !== longitude) {
 			updateViewport({
 				...viewport,
