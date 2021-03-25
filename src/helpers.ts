@@ -100,3 +100,6 @@ export function useHorizontalScroll() {
 	}, []);
 	return elementRef;
 }
+
+export const applyToArray = (func: Function, array: Array<number>): number =>
+	func.apply(Math, array);

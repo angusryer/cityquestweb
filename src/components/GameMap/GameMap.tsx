@@ -8,6 +8,11 @@ import { v4 as uuid } from "uuid";
 import useDimensions from "react-cool-dimensions";
 import { getGameLocations } from "../../firebaseLogic";
 import { playerLocationAtom, gameLocationsAtom } from "../../gameActions";
+import {
+	playerOutOfBounds,
+	getBoundsExpression,
+	getAllLocations
+} from "./mapFunctions";
 import { useLocationWatcher } from "../../helpers";
 import MapMarker from "./MapMarker";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -26,42 +31,23 @@ const initialViewport = {
 	transitionInterpolator: new FlyToInterpolator()
 };
 type Viewport = typeof initialViewport;
+const initialBounds: BoundsExpression = [
+	[0, 0],
+	[10, 10]
+];
 
 export default function Map(): JSX.Element {
 	const [viewport, setViewport] = useState<Viewport>(initialViewport);
+	const [bounds, setBounds] = useState<BoundsExpression>(initialBounds);
 	const { height, width, ref } = useDimensions<HTMLDivElement>();
 	const [playerLocation, setPlayerLocation] = useAtom(playerLocationAtom);
 	const [gameLocations, setGameLocations] = useAtom(gameLocationsAtom);
 
-	// set up a watch for player's location
 	useLocationWatcher(setPlayerLocation);
 
-	// get all gameplay locations from server
 	useEffect(() => {
 		getGameLocations(setGameLocations);
-	}, [setGameLocations]);
-
-	// TODO memoize the result of getBoundsExpression
-	//** Remember to return LONG, LAT instead of LAT, LONG for the BoundsExpression */
-	const getBoundsExpression = (): BoundsExpression => {
-		let gameLocationsArray: Array<LocationTuple> = [
-			[playerLocation?.long || 0, playerLocation?.lat || 0]
-		];
-		if (gameLocations.length !== 0) {
-			let otherLocationsArray: Array<LocationTuple> = gameLocations.map(
-				(loc) => {
-					return [loc.location[1], loc.location[0]];
-				}
-			);
-			gameLocationsArray.push(...otherLocationsArray);
-			// TODO must get the two points between which there is the greatest distance and return that
-			// const antipodalPoints: BoundsExpression = getAntipodalPoints(gameLocationsArray);
-			return [gameLocationsArray[0], gameLocationsArray[2]] as BoundsExpression;
-		}
-		// TODO must get the two points between which there is the greatest distance and return that
-		// const antipodalPoints: BoundsExpression = getAntipodalPoints(gameLocationsArray);
-		return [gameLocationsArray[0], gameLocationsArray[0]] as BoundsExpression;
-	};
+	}, [gameLocations, setGameLocations]);
 
 	const updateViewport = (freshViewport: Viewport): void => {
 		setViewport((previousViewport) => ({
@@ -70,24 +56,38 @@ export default function Map(): JSX.Element {
 		}));
 	};
 
-	// set up bounding box
 	useEffect(() => {
-		const boundsExpression: BoundsExpression = getBoundsExpression();
-		// TODO if memoized result of boundsExpression is the same as previous, skip this
+		if (playerLocation !== undefined && gameLocations !== undefined) {
+			if (bounds === initialBounds) {
+				const boundsExpression = getBoundsExpression(
+					getAllLocations(playerLocation, gameLocations, true)
+				);
+				setBounds(boundsExpression);
+				return;
+			}
+			if (playerOutOfBounds(bounds, playerLocation)) {
+				const boundsExpression = getBoundsExpression(
+					getAllLocations(playerLocation, gameLocations, true)
+				);
+				setBounds(boundsExpression);
+				return;
+			}
+		}
+	}, [playerLocation]);
+
+	useEffect(() => {
 		const { longitude, latitude, zoom } = new WebMercatorViewport(
 			viewport
-		).fitBounds(boundsExpression, { padding: 10 });
-		if (viewport.latitude !== latitude || viewport.longitude !== longitude) {
-			updateViewport({
-				...viewport,
-				longitude,
-				latitude,
-				zoom
-			});
-		}
-		//+ TODO check if statement to make sure viewport is being properly checked
-		//+ before adding it to the dependency array; add getBoundsExpression as well
-	}, [playerLocation, gameLocations]);
+		).fitBounds(bounds || initialBounds, { padding: 40 });
+		// if (viewport.latitude !== latitude || viewport.longitude !== longitude) {
+		updateViewport({
+			...viewport,
+			longitude,
+			latitude,
+			zoom
+		});
+		// }
+	}, [bounds]);
 
 	return (
 		<div ref={ref} className='gamemap'>
@@ -112,7 +112,7 @@ export default function Map(): JSX.Element {
 						return (
 							<MapMarker
 								key={uuid()}
-								type='trigger'
+								type={loc?.type || ""}
 								lat={loc?.location[0] || 0}
 								lng={loc?.location[1] || 0}
 							/>
